@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
         :root {
             --primary: #FF6B9D;
@@ -22,11 +22,7 @@
             --shadow: rgba(0, 0, 0, 0.15);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'DM Sans', sans-serif;
@@ -44,11 +40,9 @@
         body::before {
             content: '';
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: 
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background:
                 radial-gradient(circle at 20% 50%, rgba(255, 107, 157, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 40% 20%, rgba(254, 200, 77, 0.1) 0%, transparent 50%);
@@ -74,14 +68,8 @@
         }
 
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
@@ -111,10 +99,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .back-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
+        .back-link:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); }
 
         .controls {
             background: var(--bg);
@@ -132,15 +117,9 @@
             flex-wrap: wrap;
         }
 
-        .control-group:last-child {
-            margin-bottom: 0;
-        }
+        .control-group:last-child { margin-bottom: 0; }
 
-        label {
-            font-weight: 600;
-            color: var(--purple);
-            font-size: 0.95em;
-        }
+        label { font-weight: 600; color: var(--purple); font-size: 0.95em; }
 
         input[type="number"] {
             padding: 10px 15px;
@@ -172,23 +151,15 @@
             box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
         }
 
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4); }
+        button:active { transform: translateY(0); }
 
         button.secondary {
             background: linear-gradient(135deg, var(--orange) 0%, #FFA458 100%);
             box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
         }
 
-        button.secondary:hover {
-            box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
-        }
+        button.secondary:hover { box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4); }
 
         table {
             width: 100%;
@@ -216,14 +187,8 @@
             background: white;
         }
 
-        tbody tr:nth-child(even) td {
-            background: var(--bg);
-        }
-
-        tbody tr:hover td {
-            background: rgba(78, 205, 196, 0.1);
-            transition: background 0.2s ease;
-        }
+        tbody tr:nth-child(even) td { background: var(--bg); }
+        tbody tr:hover td { background: rgba(78, 205, 196, 0.1); transition: background 0.2s ease; }
 
         .result {
             margin-top: 25px;
@@ -234,26 +199,32 @@
             line-height: 1.8;
         }
 
-        .result strong {
-            font-size: 1.1em;
+        .result strong { font-size: 1.1em; }
+        .fair { color: var(--green); font-weight: 700; }
+        .unfair { color: var(--primary); font-weight: 700; }
+        .stat-line { margin: 8px 0; font-size: 0.95em; }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px var(--shadow);
+            margin-bottom: 20px;
         }
 
-        .fair {
-            color: var(--green);
-            font-weight: 700;
+        .chart-card h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            color: var(--purple);
         }
 
-        .unfair {
-            color: var(--primary);
-            font-weight: 700;
+        .chart-card p {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 15px;
         }
 
-        .stat-line {
-            margin: 8px 0;
-            font-size: 0.95em;
-        }
-
-        /* Decorative elements */
         .deco {
             position: fixed;
             pointer-events: none;
@@ -262,30 +233,24 @@
         }
 
         .deco-1 {
-            top: 15%;
-            right: 10%;
-            width: 60px;
-            height: 60px;
+            top: 15%; right: 10%;
+            width: 60px; height: 60px;
             background: var(--purple);
             border-radius: 50%;
             animation: bounce1 3s ease-in-out infinite;
         }
 
         .deco-2 {
-            bottom: 20%;
-            left: 8%;
-            width: 50px;
-            height: 50px;
+            bottom: 20%; left: 8%;
+            width: 50px; height: 50px;
             background: var(--accent);
             border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
             animation: bounce2 4s ease-in-out infinite;
         }
 
         .deco-3 {
-            top: 50%;
-            left: 12%;
-            width: 45px;
-            height: 45px;
+            top: 50%; left: 12%;
+            width: 45px; height: 45px;
             background: var(--secondary);
             border-radius: 10px;
             transform: rotate(45deg);
@@ -308,34 +273,13 @@
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 25px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .control-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            input[type="number"] {
-                width: 100%;
-            }
-
-            button {
-                width: 100%;
-            }
-
-            table {
-                font-size: 0.9em;
-            }
-
-            th, td {
-                padding: 10px 8px;
-            }
+            .container { padding: 25px; }
+            h1 { font-size: 1.8rem; }
+            .control-group { flex-direction: column; align-items: flex-start; }
+            input[type="number"] { width: 100%; }
+            button { width: 100%; }
+            table { font-size: 0.9em; }
+            th, td { padding: 10px 8px; }
         }
     </style>
 </head>
@@ -346,7 +290,7 @@
 
     <div class="container">
         <a href="index.html" class="back-link">🏠 Back to Menu</a>
-        
+
         <h1>🎲 Polyhedral Die Fairness Tester</h1>
 
         <div class="controls">
@@ -356,7 +300,6 @@
                 <button onclick="setSides()">Set Die</button>
                 <button class="secondary" onclick="resetData()">Reset Rolls</button>
             </div>
-
             <div class="control-group">
                 <label>Enter roll:</label>
                 <input type="number" id="rollInput" onkeypress="handleEnter(event)">
@@ -375,34 +318,29 @@
             <tbody id="resultsTable"></tbody>
         </table>
 
-        <!-- Charts Section -->
         <div style="margin-top: 30px;">
             <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.5em; margin-bottom: 20px; color: var(--purple); text-align: center;">📊 Visual Analysis</h2>
-            
-            <!-- Main Distribution Chart -->
-            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
-                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Distribution Comparison</h3>
-                <canvas id="distributionChart" style="max-height: 350px;"></canvas>
+
+            <div class="chart-card">
+                <h3>Distribution Comparison</h3>
+                <canvas id="distributionChart"></canvas>
             </div>
 
-            <!-- Deviation Chart -->
-            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
-                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Deviation from Expected</h3>
-                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Shows how much each face deviates from the expected frequency</p>
-                <canvas id="deviationChart" style="max-height: 300px;"></canvas>
+            <div class="chart-card">
+                <h3>Deviation from Expected</h3>
+                <p>Shows how much each face deviates from the expected frequency</p>
+                <canvas id="deviationChart"></canvas>
             </div>
 
-            <!-- Percentage Chart -->
-            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
-                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Percentage Distribution</h3>
-                <canvas id="percentageChart" style="max-height: 350px;"></canvas>
+            <div class="chart-card">
+                <h3>Percentage Distribution</h3>
+                <canvas id="percentageChart"></canvas>
             </div>
 
-            <!-- Chi-Square Contribution Chart -->
-            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow);">
-                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Chi-Square Contribution by Face</h3>
-                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Higher values indicate faces that contribute most to unfairness</p>
-                <canvas id="chiSquareChart" style="max-height: 300px;"></canvas>
+            <div class="chart-card">
+                <h3>Chi-Square Contribution by Face</h3>
+                <p>Higher values indicate faces that contribute most to unfairness</p>
+                <canvas id="chiSquareChart"></canvas>
             </div>
         </div>
 
@@ -412,337 +350,200 @@
     <script>
         let sides = 6;
         let counts = [];
-        const ALPHA = 0.01; // 1% significance level
+        const ALPHA = 0.01;
         let distributionChart = null;
         let deviationChart = null;
         let percentageChart = null;
         let chiSquareChart = null;
 
-        function initCharts() {
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: {
-                                family: "'DM Sans', sans-serif",
-                                size: 12,
-                                weight: 600
-                            },
-                            padding: 15
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(44, 62, 80, 0.9)',
-                        padding: 12,
-                        titleFont: {
-                            family: "'Fredoka', sans-serif",
-                            size: 14
-                        },
-                        bodyFont: {
-                            family: "'DM Sans', sans-serif",
-                            size: 13
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            font: {
-                                family: "'DM Sans', sans-serif"
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            font: {
-                                family: "'DM Sans', sans-serif"
-                            }
-                        },
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            };
+        const fontFamily = "'DM Sans', sans-serif";
 
-            // Distribution Chart
-            const ctx1 = document.getElementById('distributionChart').getContext('2d');
-            distributionChart = new Chart(ctx1, {
+        const axisDefaults = {
+            ticks: { font: { family: fontFamily } },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+        };
+
+        const tooltipDefaults = {
+            backgroundColor: 'rgba(44,62,80,0.9)',
+            padding: 12,
+            titleFont: { family: "'Fredoka', sans-serif", size: 14 },
+            bodyFont: { family: fontFamily, size: 13 }
+        };
+
+        const legendDefaults = {
+            display: true,
+            position: 'top',
+            labels: { font: { family: fontFamily, size: 12, weight: 600 }, padding: 15 }
+        };
+
+        function makeAxis(label) {
+            return {
+                ...axisDefaults,
+                beginAtZero: true,
+                title: { display: true, text: label, font: { family: fontFamily, size: 13, weight: 600 } }
+            };
+        }
+
+        function initCharts() {
+            // Distribution
+            distributionChart = new Chart(document.getElementById('distributionChart'), {
                 type: 'bar',
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'Observed Rolls',
-                        data: [],
-                        backgroundColor: 'rgba(155, 89, 182, 0.8)',
-                        borderColor: 'rgba(155, 89, 182, 1)',
-                        borderWidth: 2
-                    }, {
-                        label: 'Expected (Fair Die)',
-                        data: [],
-                        backgroundColor: 'rgba(78, 205, 196, 0.4)',
-                        borderColor: 'rgba(78, 205, 196, 1)',
-                        borderWidth: 2,
-                        type: 'line',
-                        borderDash: [5, 5],
-                        pointRadius: 5,
-                        pointBackgroundColor: 'rgba(78, 205, 196, 1)'
-                    }]
+                    datasets: [
+                        {
+                            label: 'Observed Rolls',
+                            data: [],
+                            backgroundColor: 'rgba(155,89,182,0.8)',
+                            borderColor: 'rgba(155,89,182,1)',
+                            borderWidth: 2,
+                            order: 2
+                        },
+                        {
+                            label: 'Expected (Fair Die)',
+                            data: [],
+                            backgroundColor: 'rgba(78,205,196,0.4)',
+                            borderColor: 'rgba(78,205,196,1)',
+                            borderWidth: 2,
+                            type: 'line',
+                            borderDash: [5,5],
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(78,205,196,1)',
+                            order: 1
+                        }
+                    ]
                 },
                 options: {
-                    ...commonOptions,
-                    scales: {
-                        ...commonOptions.scales,
-                        y: {
-                            ...commonOptions.scales.y,
-                            title: {
-                                display: true,
-                                text: 'Number of Rolls',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        },
-                        x: {
-                            ...commonOptions.scales.x,
-                            title: {
-                                display: true,
-                                text: 'Die Face',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        }
-                    }
+                    responsive: true,
+                    plugins: { legend: legendDefaults, tooltip: tooltipDefaults },
+                    scales: { y: makeAxis('Number of Rolls'), x: { ...axisDefaults, title: { display: true, text: 'Die Face', font: { family: fontFamily, size: 13, weight: 600 } }, grid: { display: false } } }
                 }
             });
 
-            // Deviation Chart
-            const ctx2 = document.getElementById('deviationChart').getContext('2d');
-            deviationChart = new Chart(ctx2, {
+            // Deviation
+            deviationChart = new Chart(document.getElementById('deviationChart'), {
                 type: 'bar',
                 data: {
                     labels: [],
                     datasets: [{
                         label: 'Deviation',
                         data: [],
-                        backgroundColor: function(context) {
-                            const value = context.parsed.y;
-                            return value > 0 ? 'rgba(255, 107, 157, 0.8)' : 'rgba(81, 207, 102, 0.8)';
-                        },
-                        borderColor: function(context) {
-                            const value = context.parsed.y;
-                            return value > 0 ? 'rgba(255, 107, 157, 1)' : 'rgba(81, 207, 102, 1)';
-                        },
+                        backgroundColor: [],
+                        borderColor: [],
                         borderWidth: 2
                     }]
                 },
                 options: {
-                    ...commonOptions,
-                    scales: {
-                        ...commonOptions.scales,
-                        y: {
-                            ...commonOptions.scales.y,
-                            title: {
-                                display: true,
-                                text: 'Deviation from Expected',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        },
-                        x: {
-                            ...commonOptions.scales.x,
-                            title: {
-                                display: true,
-                                text: 'Die Face',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        }
-                    }
+                    responsive: true,
+                    plugins: { legend: legendDefaults, tooltip: tooltipDefaults },
+                    scales: { y: makeAxis('Deviation from Expected'), x: { ...axisDefaults, title: { display: true, text: 'Die Face', font: { family: fontFamily, size: 13, weight: 600 } }, grid: { display: false } } }
                 }
             });
 
-            // Percentage Chart
-            const ctx3 = document.getElementById('percentageChart').getContext('2d');
-            percentageChart = new Chart(ctx3, {
+            // Percentage
+            percentageChart = new Chart(document.getElementById('percentageChart'), {
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [{
-                        label: 'Observed %',
-                        data: [],
-                        backgroundColor: 'rgba(155, 89, 182, 0.2)',
-                        borderColor: 'rgba(155, 89, 182, 1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointBackgroundColor: 'rgba(155, 89, 182, 1)'
-                    }, {
-                        label: 'Expected % (Fair)',
-                        data: [],
-                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
-                        borderColor: 'rgba(78, 205, 196, 1)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        fill: true,
-                        pointRadius: 4,
-                        pointBackgroundColor: 'rgba(78, 205, 196, 1)'
-                    }]
+                    datasets: [
+                        {
+                            label: 'Observed %',
+                            data: [],
+                            backgroundColor: 'rgba(155,89,182,0.2)',
+                            borderColor: 'rgba(155,89,182,1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: 'rgba(155,89,182,1)'
+                        },
+                        {
+                            label: 'Expected % (Fair)',
+                            data: [],
+                            backgroundColor: 'rgba(78,205,196,0.1)',
+                            borderColor: 'rgba(78,205,196,1)',
+                            borderWidth: 2,
+                            borderDash: [5,5],
+                            fill: true,
+                            pointRadius: 4,
+                            pointBackgroundColor: 'rgba(78,205,196,1)'
+                        }
+                    ]
                 },
                 options: {
-                    ...commonOptions,
+                    responsive: true,
+                    plugins: { legend: legendDefaults, tooltip: tooltipDefaults },
                     scales: {
-                        ...commonOptions.scales,
-                        y: {
-                            ...commonOptions.scales.y,
-                            title: {
-                                display: true,
-                                text: 'Percentage (%)',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            },
-                            max: 100
-                        },
-                        x: {
-                            ...commonOptions.scales.x,
-                            title: {
-                                display: true,
-                                text: 'Die Face',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        }
+                        y: { ...makeAxis('Percentage (%)'), max: 100 },
+                        x: { ...axisDefaults, title: { display: true, text: 'Die Face', font: { family: fontFamily, size: 13, weight: 600 } }, grid: { display: false } }
                     }
                 }
             });
 
-            // Chi-Square Contribution Chart
-            const ctx4 = document.getElementById('chiSquareChart').getContext('2d');
-            chiSquareChart = new Chart(ctx4, {
+            // Chi-square
+            chiSquareChart = new Chart(document.getElementById('chiSquareChart'), {
                 type: 'bar',
                 data: {
                     labels: [],
                     datasets: [{
                         label: 'χ² Contribution',
                         data: [],
-                        backgroundColor: 'rgba(255, 140, 66, 0.8)',
-                        borderColor: 'rgba(255, 140, 66, 1)',
+                        backgroundColor: 'rgba(255,140,66,0.8)',
+                        borderColor: 'rgba(255,140,66,1)',
                         borderWidth: 2
                     }]
                 },
                 options: {
-                    ...commonOptions,
-                    scales: {
-                        ...commonOptions.scales,
-                        y: {
-                            ...commonOptions.scales.y,
-                            title: {
-                                display: true,
-                                text: 'Chi-Square Contribution',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        },
-                        x: {
-                            ...commonOptions.scales.x,
-                            title: {
-                                display: true,
-                                text: 'Die Face',
-                                font: {
-                                    family: "'DM Sans', sans-serif",
-                                    size: 13,
-                                    weight: 600
-                                }
-                            }
-                        }
-                    }
+                    responsive: true,
+                    plugins: { legend: legendDefaults, tooltip: tooltipDefaults },
+                    scales: { y: makeAxis('Chi-Square Contribution'), x: { ...axisDefaults, title: { display: true, text: 'Die Face', font: { family: fontFamily, size: 13, weight: 600 } }, grid: { display: false } } }
                 }
             });
         }
 
         function updateCharts() {
-            console.log('updateCharts called, charts exist:', {
-                distribution: !!distributionChart,
-                deviation: !!deviationChart, 
-                percentage: !!percentageChart,
-                chiSquare: !!chiSquareChart
-            });
-            
-            if (!distributionChart || !deviationChart || !percentageChart || !chiSquareChart) {
-                console.warn('Charts not initialized yet');
-                return;
-            }
-
+            if (!distributionChart) return;
             const totalRolls = counts.reduce((a, b) => a + b, 0);
-            console.log('Total rolls:', totalRolls, 'Counts:', counts);
-            if (totalRolls === 0) {
-                console.log('No rolls yet, skipping chart update');
-                return;
-            }
+            if (totalRolls === 0) return;
 
             const expected = totalRolls / sides;
             const labels = Array.from({length: sides}, (_, i) => String(i + 1));
-            const expectedPercent = 100 / sides;
+            const expectedPct = 100 / sides;
 
-            // Update Distribution Chart
+            // Distribution
             distributionChart.data.labels = labels;
-            distributionChart.data.datasets[0].data = counts;
+            distributionChart.data.datasets[0].data = [...counts];
             distributionChart.data.datasets[1].data = Array(sides).fill(expected);
             distributionChart.update();
 
-            // Update Deviation Chart
+            // Deviation — set colours per bar
             const deviations = counts.map(c => c - expected);
+            const devBg = deviations.map(v => v > 0 ? 'rgba(255,107,157,0.8)' : 'rgba(81,207,102,0.8)');
+            const devBorder = deviations.map(v => v > 0 ? 'rgba(255,107,157,1)' : 'rgba(81,207,102,1)');
             deviationChart.data.labels = labels;
             deviationChart.data.datasets[0].data = deviations;
+            deviationChart.data.datasets[0].backgroundColor = devBg;
+            deviationChart.data.datasets[0].borderColor = devBorder;
             deviationChart.update();
 
-            // Update Percentage Chart
-            const percentages = counts.map(c => (c / totalRolls) * 100);
+            // Percentage
+            const pcts = counts.map(c => (c / totalRolls) * 100);
             percentageChart.data.labels = labels;
-            percentageChart.data.datasets[0].data = percentages;
-            percentageChart.data.datasets[1].data = Array(sides).fill(expectedPercent);
+            percentageChart.data.datasets[0].data = pcts;
+            percentageChart.data.datasets[1].data = Array(sides).fill(expectedPct);
             percentageChart.update();
 
-            // Update Chi-Square Chart
-            const chiContributions = counts.map(c => Math.pow(c - expected, 2) / expected);
+            // Chi-square contributions
+            const chiContr = counts.map(c => Math.pow(c - expected, 2) / expected);
             chiSquareChart.data.labels = labels;
-            chiSquareChart.data.datasets[0].data = chiContributions;
+            chiSquareChart.data.datasets[0].data = chiContr;
             chiSquareChart.update();
         }
 
         function setSides() {
-            const value = Number(document.getElementById("sidesInput").value);
+            const value = Number(document.getElementById('sidesInput').value);
             if (value < 2 || !Number.isInteger(value)) {
-                alert("Number of sides must be an integer ≥ 2.");
+                alert('Number of sides must be an integer ≥ 2.');
                 return;
             }
             sides = value;
@@ -752,179 +553,111 @@
         function resetData() {
             counts = new Array(sides).fill(0);
             updateDisplay();
-            updateCharts();
         }
 
         function addRoll() {
-            const value = Number(document.getElementById("rollInput").value);
+            const value = Number(document.getElementById('rollInput').value);
             if (!Number.isInteger(value) || value < 1 || value > sides) {
                 alert(`Please enter a whole number between 1 and ${sides}.`);
                 return;
             }
             counts[value - 1]++;
-            document.getElementById("rollInput").value = "";
+            document.getElementById('rollInput').value = '';
             updateDisplay();
         }
 
         function handleEnter(event) {
-            if (event.key === 'Enter') {
-                addRoll();
-            }
+            if (event.key === 'Enter') addRoll();
         }
 
         function updateDisplay() {
-            const tableBody = document.getElementById("resultsTable");
-            const totalRolls = counts.reduce((a, b) => a + b, 0);
-            const expected = totalRolls / sides;
-
-            tableBody.innerHTML = "";
-
+            const tbody = document.getElementById('resultsTable');
+            const total = counts.reduce((a, b) => a + b, 0);
+            const expected = total / sides;
+            tbody.innerHTML = '';
             for (let i = 0; i < sides; i++) {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td><strong>${i + 1}</strong></td>
-                    <td>${counts[i]}</td>
-                    <td>${totalRolls === 0 ? "-" : expected.toFixed(2)}</td>
-                `;
-                tableBody.appendChild(row);
+                const row = document.createElement('tr');
+                row.innerHTML = `<td><strong>${i + 1}</strong></td><td>${counts[i]}</td><td>${total === 0 ? '-' : expected.toFixed(2)}</td>`;
+                tbody.appendChild(row);
             }
-
-            calculateStats(totalRolls, expected);
+            calculateStats(total, expected);
             updateCharts();
         }
 
         function calculateStats(total, expected) {
-            const resultDiv = document.getElementById("chiResult");
+            const div = document.getElementById('chiResult');
+            if (total === 0) { div.style.display = 'none'; return; }
+            div.style.display = 'block';
 
-            if (total === 0) {
-                resultDiv.style.display = "none";
-                return;
-            }
-
-            resultDiv.style.display = "block";
-
-            /* ---- Chi-squared ---- */
-            let chiSquared = 0;
-            for (let i = 0; i < sides; i++) {
-                chiSquared += Math.pow(counts[i] - expected, 2) / expected;
-            }
+            let chi2 = 0;
+            for (let i = 0; i < sides; i++) chi2 += Math.pow(counts[i] - expected, 2) / expected;
 
             const df = sides - 1;
-            const pValue = chiSquaredPValue(chiSquared, df);
+            const p = chiSquaredPValue(chi2, df);
 
-            /* ---- Bias direction via mean ---- */
             let observedSum = 0;
-            for (let i = 0; i < sides; i++) {
-                observedSum += counts[i] * (i + 1);
+            for (let i = 0; i < sides; i++) observedSum += counts[i] * (i + 1);
+            const obsMean = observedSum / total;
+            const expMean = (sides + 1) / 2;
+
+            let biasDir = 'No directional bias detected';
+            if (p < ALPHA) {
+                if (obsMean > expMean) biasDir = 'Biased toward higher numbers';
+                else if (obsMean < expMean) biasDir = 'Biased toward lower numbers';
             }
 
-            const observedMean = observedSum / total;
-            const expectedMean = (sides + 1) / 2;
-
-            let biasDirection = "No directional bias detected";
-            if (pValue < ALPHA) {
-                if (observedMean > expectedMean) {
-                    biasDirection = "Biased toward higher numbers";
-                } else if (observedMean < expectedMean) {
-                    biasDirection = "Biased toward lower numbers";
-                }
-            }
-
-            resultDiv.innerHTML = `
-                <div class="stat-line">χ² = <strong>${chiSquared.toFixed(3)}</strong></div>
+            div.innerHTML = `
+                <div class="stat-line">χ² = <strong>${chi2.toFixed(3)}</strong></div>
                 <div class="stat-line">Degrees of freedom = <strong>${df}</strong></div>
-                <div class="stat-line">p-value ≈ <strong>${pValue.toFixed(4)}</strong></div>
+                <div class="stat-line">p-value ≈ <strong>${p.toFixed(4)}</strong></div>
                 <div class="stat-line">Significance level α = <strong>0.01</strong></div>
                 <br>
-                ${
-                    pValue >= ALPHA
-                    ? `<div class="stat-line"><span class="fair">✓ No significant evidence of unfairness</span></div>`
-                    : `<div class="stat-line"><span class="unfair">⚠ Significant evidence the die is unfair</span></div>`
-                }
+                ${p >= ALPHA
+                    ? '<div class="stat-line"><span class="fair">✓ No significant evidence of unfairness</span></div>'
+                    : '<div class="stat-line"><span class="unfair">⚠ Significant evidence the die is unfair</span></div>'}
                 <br>
-                <div class="stat-line">Observed mean = <strong>${observedMean.toFixed(3)}</strong></div>
-                <div class="stat-line">Expected mean = <strong>${expectedMean.toFixed(3)}</strong></div>
-                <div class="stat-line"><strong>${biasDirection}</strong></div>
+                <div class="stat-line">Observed mean = <strong>${obsMean.toFixed(3)}</strong></div>
+                <div class="stat-line">Expected mean = <strong>${expMean.toFixed(3)}</strong></div>
+                <div class="stat-line"><strong>${biasDir}</strong></div>
             `;
         }
 
-        /* ---- Chi-squared p-value (incomplete gamma) ---- */
-        function chiSquaredPValue(x, k) {
-            return gammaincc(k / 2, x / 2);
-        }
+        function chiSquaredPValue(x, k) { return gammaincc(k / 2, x / 2); }
 
         function gammaincc(a, x) {
             if (x < 0 || a <= 0) return NaN;
-            if (x < a + 1) {
-                return 1 - gammaincSeries(a, x);
-            } else {
-                return gammaincCF(a, x);
-            }
+            return x < a + 1 ? 1 - gammaincSeries(a, x) : gammaincCF(a, x);
         }
 
         function gammaincSeries(a, x) {
-            let sum = 1 / a;
-            let value = sum;
-            for (let n = 1; n < 100; n++) {
-                sum *= x / (a + n);
-                value += sum;
-            }
+            let sum = 1 / a, value = sum;
+            for (let n = 1; n < 100; n++) { sum *= x / (a + n); value += sum; }
             return value * Math.exp(-x + a * Math.log(x) - logGamma(a));
         }
 
         function gammaincCF(a, x) {
-            let b = x + 1 - a;
-            let c = 1 / 1e-30;
-            let d = 1 / b;
-            let h = d;
-
+            let b = x + 1 - a, c = 1 / 1e-30, d = 1 / b, h = d;
             for (let i = 1; i < 100; i++) {
-                let an = -i * (i - a);
-                b += 2;
-                d = an * d + b;
-                if (Math.abs(d) < 1e-30) d = 1e-30;
-                c = b + an / c;
-                if (Math.abs(c) < 1e-30) c = 1e-30;
-                d = 1 / d;
-                h *= d * c;
+                let an = -i * (i - a); b += 2;
+                d = an * d + b; if (Math.abs(d) < 1e-30) d = 1e-30;
+                c = b + an / c; if (Math.abs(c) < 1e-30) c = 1e-30;
+                d = 1 / d; h *= d * c;
             }
-
             return Math.exp(-x + a * Math.log(x) - logGamma(a)) * h;
         }
 
         function logGamma(z) {
-            const cof = [
-                76.18009172947146, -86.50532032941677,
-                24.01409824083091, -1.231739572450155,
-                0.001208650973866179, -0.000005395239384953
-            ];
-            let x = z;
-            let y = z;
-            let tmp = x + 5.5;
+            const cof = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.001208650973866179, -0.000005395239384953];
+            let x = z, y = z, tmp = x + 5.5;
             tmp -= (x + 0.5) * Math.log(tmp);
             let ser = 1.000000000190015;
-            for (let j = 0; j < cof.length; j++) {
-                ser += cof[j] / ++y;
-            }
+            for (let j = 0; j < cof.length; j++) ser += cof[j] / ++y;
             return Math.log(2.5066282746310005 * ser / x) - tmp;
         }
 
-        // Initialize when page is fully loaded
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, Chart available:', typeof Chart !== 'undefined');
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js not loaded!');
-                alert('Error: Chart library failed to load. Please refresh the page.');
-                return;
-            }
-            try {
-                initCharts();
-                setSides();
-                console.log('Charts initialized successfully');
-            } catch (error) {
-                console.error('Error initializing charts:', error);
-                alert('Error initializing charts: ' + error.message);
-            }
+        window.addEventListener('DOMContentLoaded', function () {
+            initCharts();
+            setSides();
         });
     </script>
 </body>
