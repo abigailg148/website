@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #FF6B9D;
@@ -690,10 +690,24 @@
         }
 
         function updateCharts() {
-            if (!distributionChart || !deviationChart || !percentageChart || !chiSquareChart) return;
+            console.log('updateCharts called, charts exist:', {
+                distribution: !!distributionChart,
+                deviation: !!deviationChart, 
+                percentage: !!percentageChart,
+                chiSquare: !!chiSquareChart
+            });
+            
+            if (!distributionChart || !deviationChart || !percentageChart || !chiSquareChart) {
+                console.warn('Charts not initialized yet');
+                return;
+            }
 
             const totalRolls = counts.reduce((a, b) => a + b, 0);
-            if (totalRolls === 0) return;
+            console.log('Total rolls:', totalRolls, 'Counts:', counts);
+            if (totalRolls === 0) {
+                console.log('No rolls yet, skipping chart update');
+                return;
+            }
 
             const expected = totalRolls / sides;
             const labels = Array.from({length: sides}, (_, i) => String(i + 1));
@@ -895,8 +909,23 @@
             return Math.log(2.5066282746310005 * ser / x) - tmp;
         }
 
-        initCharts();
-        setSides();
+        // Initialize when page is fully loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, Chart available:', typeof Chart !== 'undefined');
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded!');
+                alert('Error: Chart library failed to load. Please refresh the page.');
+                return;
+            }
+            try {
+                initCharts();
+                setSides();
+                console.log('Charts initialized successfully');
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+                alert('Error initializing charts: ' + error.message);
+            }
+        });
     </script>
 </body>
 </html>
