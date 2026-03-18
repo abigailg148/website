@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1705429613733149"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flappy Block Game</title>
+    <title>Flappy Duck</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -111,6 +109,9 @@
             border-radius: 15px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             display: block;
+            touch-action: none; /* Prevent default touch behaviors */
+            max-width: 100%;
+            height: auto;
         }
 
         .side-panel {
@@ -183,13 +184,35 @@
             }
 
             .side-panel {
-                width: 320px;
+                width: 100%;
+                max-width: 320px;
                 height: auto;
                 min-height: 200px;
             }
 
+            canvas {
+                width: 100% !important;
+                max-width: 320px;
+                height: auto !important;
+            }
+
             #leaderboard-container {
                 max-height: 300px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin: 10px 0 20px 0;
+            }
+
+            .side-panel {
+                padding: 15px;
             }
         }
 
@@ -253,7 +276,7 @@
     <div class="deco deco-2"></div>
     <div class="deco deco-3"></div>
 
-    <h1>🐦 Flappy Block Game 🐦</h1>
+    <h1>🦆 Flappy Duck 🦆</h1>
 
     <div class="game-container">
         <!-- Game Canvas -->
@@ -265,8 +288,8 @@
         <div class="side-panel" id="controls-container">
             <h3>Controls</h3>
             <div class="info-text">
-                <strong>Press SPACE to jump!</strong>
-                Avoid the pipes and get the highest score!
+                <strong>Press SPACE, TAP or CLICK to flap!</strong>
+                Help the duck avoid the pipes and get the highest score!
             </div>
             <button id="retry-btn">🔄 Play Again</button>
         </div>
@@ -306,7 +329,7 @@
             gameLoop();
         }
 
-        // Event listener for jump
+        // Event listener for jump (keyboard)
         document.addEventListener('keydown', function(e) {
             if (e.key === " " && !isGameOver) {
                 birdSpeed = lift;
@@ -314,21 +337,40 @@
             }
         });
 
-        // Draw cartoon bird function
+        // Event listener for jump (touch/click)
+        canvas.addEventListener('click', function() {
+            if (!isGameOver) {
+                birdSpeed = lift;
+            }
+        });
+
+        canvas.addEventListener('touchstart', function(e) {
+            if (!isGameOver) {
+                birdSpeed = lift;
+                e.preventDefault();
+            }
+        });
+
+        // Draw cartoon duck function
         function drawBird(x, y) {
             ctx.save();
             
-            // Add shadow to bird
+            // Add shadow to duck
             ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 2;
             ctx.shadowOffsetY = 2;
             
-            // Bird body (circle)
-            ctx.fillStyle = "#FEC84D";
+            // Duck body (circle) - brown
+            ctx.fillStyle = "#8B6914";
             ctx.beginPath();
             ctx.arc(x + 15, y + 15, 15, 0, Math.PI * 2);
             ctx.fill();
+            
+            // Body outline
+            ctx.strokeStyle = "#6B4E0F";
+            ctx.lineWidth = 2;
+            ctx.stroke();
             
             // Reset shadow for details
             ctx.shadowColor = 'transparent';
@@ -336,17 +378,37 @@
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
             
-            // Wing
-            ctx.fillStyle = "#FF8C42";
+            // Green head patch (mallard style)
+            ctx.fillStyle = "#2D5016";
+            ctx.beginPath();
+            ctx.arc(x + 18, y + 10, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Lighter green highlight on head
+            ctx.fillStyle = "#3D7028";
+            ctx.beginPath();
+            ctx.arc(x + 20, y + 8, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Wing - darker brown
+            ctx.fillStyle = "#6B4E0F";
             ctx.beginPath();
             ctx.ellipse(x + 8, y + 18, 8, 6, Math.PI / 6, 0, Math.PI * 2);
             ctx.fill();
+            ctx.strokeStyle = "#4D3A0A";
+            ctx.lineWidth = 1;
+            ctx.stroke();
             
             // Eye white
             ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.arc(x + 20, y + 12, 5, 0, Math.PI * 2);
             ctx.fill();
+            
+            // Eye outline
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 1;
+            ctx.stroke();
             
             // Eye pupil
             ctx.fillStyle = "black";
@@ -360,39 +422,66 @@
             ctx.arc(x + 23, y + 11, 1.5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Beak
-            ctx.fillStyle = "#FF8C42";
+            // Duck beak - yellow-green
+            ctx.fillStyle = "#C2B566";
             ctx.beginPath();
             ctx.moveTo(x + 25, y + 16);
-            ctx.lineTo(x + 32, y + 18);
+            ctx.lineTo(x + 34, y + 17);
+            ctx.lineTo(x + 34, y + 19);
             ctx.lineTo(x + 25, y + 20);
             ctx.closePath();
             ctx.fill();
             
             // Beak outline
-            ctx.strokeStyle = "#E67700";
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#9A8F4D";
+            ctx.lineWidth = 1.5;
             ctx.stroke();
             
-            // Belly spot
-            ctx.fillStyle = "#FFE4B5";
+            // Beak detail line
+            ctx.strokeStyle = "#7A6F3D";
+            ctx.beginPath();
+            ctx.moveTo(x + 25, y + 18);
+            ctx.lineTo(x + 32, y + 18);
+            ctx.stroke();
+            
+            // Belly spot - lighter brown
+            ctx.fillStyle = "#A67C28";
             ctx.beginPath();
             ctx.ellipse(x + 15, y + 20, 8, 6, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Tail feathers
-            ctx.fillStyle = "#FF8C42";
+            // Tail feathers - dark brown with green tips
+            ctx.fillStyle = "#6B4E0F";
             ctx.beginPath();
             ctx.moveTo(x + 2, y + 12);
-            ctx.lineTo(x - 3, y + 8);
+            ctx.lineTo(x - 4, y + 8);
             ctx.lineTo(x + 4, y + 15);
             ctx.closePath();
             ctx.fill();
             
+            // Green tip on tail
+            ctx.fillStyle = "#3D7028";
+            ctx.beginPath();
+            ctx.moveTo(x - 2, y + 9);
+            ctx.lineTo(x - 4, y + 8);
+            ctx.lineTo(x, y + 12);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.fillStyle = "#6B4E0F";
             ctx.beginPath();
             ctx.moveTo(x + 2, y + 18);
-            ctx.lineTo(x - 3, y + 22);
+            ctx.lineTo(x - 4, y + 22);
             ctx.lineTo(x + 4, y + 17);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Green tip on second tail feather
+            ctx.fillStyle = "#3D7028";
+            ctx.beginPath();
+            ctx.moveTo(x - 2, y + 21);
+            ctx.lineTo(x - 4, y + 22);
+            ctx.lineTo(x, y + 18);
             ctx.closePath();
             ctx.fill();
             
@@ -416,7 +505,7 @@
             birdSpeed += gravity;
             birdY += birdSpeed;
 
-            // Draw cartoon bird
+            // Draw cartoon duck
             drawBird(birdX, birdY);
 
             // Pipe logic
@@ -504,4 +593,3 @@
     </script>
 </body>
 </html>
-
