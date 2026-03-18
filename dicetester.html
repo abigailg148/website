@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1705429613733149"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polyhedral Die Bias Test</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         :root {
             --primary: #FF6B9D;
@@ -376,6 +375,37 @@
             <tbody id="resultsTable"></tbody>
         </table>
 
+        <!-- Charts Section -->
+        <div style="margin-top: 30px;">
+            <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.5em; margin-bottom: 20px; color: var(--purple); text-align: center;">📊 Visual Analysis</h2>
+            
+            <!-- Main Distribution Chart -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
+                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Distribution Comparison</h3>
+                <canvas id="distributionChart" style="max-height: 350px;"></canvas>
+            </div>
+
+            <!-- Deviation Chart -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
+                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Deviation from Expected</h3>
+                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Shows how much each face deviates from the expected frequency</p>
+                <canvas id="deviationChart" style="max-height: 300px;"></canvas>
+            </div>
+
+            <!-- Percentage Chart -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow); margin-bottom: 20px;">
+                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Percentage Distribution</h3>
+                <canvas id="percentageChart" style="max-height: 350px;"></canvas>
+            </div>
+
+            <!-- Chi-Square Contribution Chart -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px var(--shadow);">
+                <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1.2em; margin-bottom: 15px; color: var(--purple);">Chi-Square Contribution by Face</h3>
+                <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">Higher values indicate faces that contribute most to unfairness</p>
+                <canvas id="chiSquareChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
         <div class="result" id="chiResult" style="display: none;"></div>
     </div>
 
@@ -383,6 +413,317 @@
         let sides = 6;
         let counts = [];
         const ALPHA = 0.01; // 1% significance level
+        let distributionChart = null;
+        let deviationChart = null;
+        let percentageChart = null;
+        let chiSquareChart = null;
+
+        function initCharts() {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: "'DM Sans', sans-serif",
+                                size: 12,
+                                weight: 600
+                            },
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                        padding: 12,
+                        titleFont: {
+                            family: "'Fredoka', sans-serif",
+                            size: 14
+                        },
+                        bodyFont: {
+                            family: "'DM Sans', sans-serif",
+                            size: 13
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: "'DM Sans', sans-serif"
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: "'DM Sans', sans-serif"
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+
+            // Distribution Chart
+            const ctx1 = document.getElementById('distributionChart').getContext('2d');
+            distributionChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Observed Rolls',
+                        data: [],
+                        backgroundColor: 'rgba(155, 89, 182, 0.8)',
+                        borderColor: 'rgba(155, 89, 182, 1)',
+                        borderWidth: 2
+                    }, {
+                        label: 'Expected (Fair Die)',
+                        data: [],
+                        backgroundColor: 'rgba(78, 205, 196, 0.4)',
+                        borderColor: 'rgba(78, 205, 196, 1)',
+                        borderWidth: 2,
+                        type: 'line',
+                        borderDash: [5, 5],
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(78, 205, 196, 1)'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Number of Rolls',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        },
+                        x: {
+                            ...commonOptions.scales.x,
+                            title: {
+                                display: true,
+                                text: 'Die Face',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Deviation Chart
+            const ctx2 = document.getElementById('deviationChart').getContext('2d');
+            deviationChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Deviation',
+                        data: [],
+                        backgroundColor: function(context) {
+                            const value = context.parsed.y;
+                            return value > 0 ? 'rgba(255, 107, 157, 0.8)' : 'rgba(81, 207, 102, 0.8)';
+                        },
+                        borderColor: function(context) {
+                            const value = context.parsed.y;
+                            return value > 0 ? 'rgba(255, 107, 157, 1)' : 'rgba(81, 207, 102, 1)';
+                        },
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Deviation from Expected',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        },
+                        x: {
+                            ...commonOptions.scales.x,
+                            title: {
+                                display: true,
+                                text: 'Die Face',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Percentage Chart
+            const ctx3 = document.getElementById('percentageChart').getContext('2d');
+            percentageChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Observed %',
+                        data: [],
+                        backgroundColor: 'rgba(155, 89, 182, 0.2)',
+                        borderColor: 'rgba(155, 89, 182, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: 'rgba(155, 89, 182, 1)'
+                    }, {
+                        label: 'Expected % (Fair)',
+                        data: [],
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        borderColor: 'rgba(78, 205, 196, 1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(78, 205, 196, 1)'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            },
+                            max: 100
+                        },
+                        x: {
+                            ...commonOptions.scales.x,
+                            title: {
+                                display: true,
+                                text: 'Die Face',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chi-Square Contribution Chart
+            const ctx4 = document.getElementById('chiSquareChart').getContext('2d');
+            chiSquareChart = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'χ² Contribution',
+                        data: [],
+                        backgroundColor: 'rgba(255, 140, 66, 0.8)',
+                        borderColor: 'rgba(255, 140, 66, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        ...commonOptions.scales,
+                        y: {
+                            ...commonOptions.scales.y,
+                            title: {
+                                display: true,
+                                text: 'Chi-Square Contribution',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        },
+                        x: {
+                            ...commonOptions.scales.x,
+                            title: {
+                                display: true,
+                                text: 'Die Face',
+                                font: {
+                                    family: "'DM Sans', sans-serif",
+                                    size: 13,
+                                    weight: 600
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            if (!distributionChart || !deviationChart || !percentageChart || !chiSquareChart) return;
+
+            const totalRolls = counts.reduce((a, b) => a + b, 0);
+            if (totalRolls === 0) return;
+
+            const expected = totalRolls / sides;
+            const labels = Array.from({length: sides}, (_, i) => String(i + 1));
+            const expectedPercent = 100 / sides;
+
+            // Update Distribution Chart
+            distributionChart.data.labels = labels;
+            distributionChart.data.datasets[0].data = counts;
+            distributionChart.data.datasets[1].data = Array(sides).fill(expected);
+            distributionChart.update();
+
+            // Update Deviation Chart
+            const deviations = counts.map(c => c - expected);
+            deviationChart.data.labels = labels;
+            deviationChart.data.datasets[0].data = deviations;
+            deviationChart.update();
+
+            // Update Percentage Chart
+            const percentages = counts.map(c => (c / totalRolls) * 100);
+            percentageChart.data.labels = labels;
+            percentageChart.data.datasets[0].data = percentages;
+            percentageChart.data.datasets[1].data = Array(sides).fill(expectedPercent);
+            percentageChart.update();
+
+            // Update Chi-Square Chart
+            const chiContributions = counts.map(c => Math.pow(c - expected, 2) / expected);
+            chiSquareChart.data.labels = labels;
+            chiSquareChart.data.datasets[0].data = chiContributions;
+            chiSquareChart.update();
+        }
 
         function setSides() {
             const value = Number(document.getElementById("sidesInput").value);
@@ -397,6 +738,7 @@
         function resetData() {
             counts = new Array(sides).fill(0);
             updateDisplay();
+            updateCharts();
         }
 
         function addRoll() {
@@ -434,6 +776,7 @@
             }
 
             calculateStats(totalRolls, expected);
+            updateCharts();
         }
 
         function calculateStats(total, expected) {
@@ -552,8 +895,8 @@
             return Math.log(2.5066282746310005 * ser / x) - tmp;
         }
 
+        initCharts();
         setSides();
     </script>
 </body>
 </html>
-
