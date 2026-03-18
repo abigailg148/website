@@ -523,6 +523,12 @@
 
     <script src="questionbank.js"></script>
     <script>
+        // Check if questionbank loaded
+        if (typeof topics === 'undefined' || typeof questionBank === 'undefined') {
+            alert('ERROR: Question bank not loaded!\n\nPlease make sure:\n1. questionbank.js is in the same folder as this HTML file\n2. Both files are downloaded together\n3. You are opening the HTML file (not just viewing code)');
+            console.error('questionbank.js failed to load. Make sure it is in the same directory as exampractice.html');
+        }
+        
         let currentSubject = '';
         let currentTopic = '';
         let currentSubjectKey = '';
