@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1705429613733149"
-     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
@@ -169,6 +167,9 @@
             border: 4px solid #E0E0E0;
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            touch-action: none;
+            max-width: 100%;
+            height: auto;
         }
 
         .controls {
@@ -333,6 +334,35 @@
             .button-group {
                 flex-direction: column;
             }
+
+            #gameCanvas {
+                width: 100% !important;
+                max-width: 400px;
+                height: auto !important;
+            }
+        }
+
+        @media (max-width: 450px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            #gameCanvas {
+                width: 100% !important;
+                max-width: 320px;
+            }
+
+            .controls p {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -345,12 +375,6 @@
         <a href="games.html" class="back-link">🎮 Back to Games</a>
         
         <h1>🐍 Snake Game</h1>
-        <p> Leaderboard:</p>
-        <p>1. Zoe Stewart</p>
-        <p>2. Jamie</p>
-        <p>3. Abi</p>
-        <p>4. Bethany</p>
-        <p>5. Mx Finn</p>
 
         <div class="score-board">
             <div class="score-item">
@@ -364,7 +388,7 @@
         </div>
 
         <div class="controls">
-            <p><strong>Controls:</strong> Use Arrow Keys to move the snake</p>
+            <p><strong>Controls:</strong> Use Arrow Keys or Swipe to move the snake</p>
             <p>Eat the food (🍎) to grow and score points!</p>
         </div>
 
@@ -616,6 +640,56 @@
 
         pauseBtn.addEventListener('click', togglePause);
         restartBtn.addEventListener('click', startGame);
+
+        // Touch controls for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            if (!gameRunning && (dx !== 0 || dy !== 0)) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            // Determine swipe direction
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                if (deltaX > 30 && dx === 0) {
+                    // Swipe right
+                    dx = 1;
+                    dy = 0;
+                    gameRunning = true;
+                } else if (deltaX < -30 && dx === 0) {
+                    // Swipe left
+                    dx = -1;
+                    dy = 0;
+                    gameRunning = true;
+                }
+            } else {
+                // Vertical swipe
+                if (deltaY > 30 && dy === 0) {
+                    // Swipe down
+                    dx = 0;
+                    dy = 1;
+                    gameRunning = true;
+                } else if (deltaY < -30 && dy === 0) {
+                    // Swipe up
+                    dx = 0;
+                    dy = -1;
+                    gameRunning = true;
+                }
+            }
+            e.preventDefault();
+        });
 
         // Start the game
         startGame();
