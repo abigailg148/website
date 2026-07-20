@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parchment — the town square of olde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment: #E9DBB8;
+    --parchment-alt: #E0D0A6;
+    --parchment-deep: #D6C193;
+    --edge: #B89A5D;
+    --ink: #2B1B0E;
+    --sepia: #6B4A2B;
+    --sepia-light: #8A6844;
+    --wax: #8C1F28;
+    --wax-dark: #6B141B;
+    --gold: #9C7A2E;
+    --gold-bright: #B8944A;
+    --moss: #52602F;
+    --shadow: rgba(43, 27, 14, 0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IM Fell English', serif;
+    background: var(--parchment-deep);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 28px 16px 80px;
+  }
+
+  /* Grain / paper texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(139,109,58,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 60%, rgba(139,109,58,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 40% 85%, rgba(139,109,58,0.06) 0%, transparent 45%),
+      repeating-linear-gradient(0deg, rgba(107,74,43,0.03) 0px, transparent 2px, transparent 4px);
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--parchment);
+    border: 2px solid var(--edge);
+    padding: 38px 30px 30px;
+    text-align: center;
+    position: relative;
+    margin-bottom: 26px;
+    box-shadow: 0 8px 24px var(--shadow);
+    clip-path: polygon(
+      0% 2%, 3% 0%, 12% 1.5%, 22% 0%, 34% 1.2%, 47% 0%, 58% 1.5%, 71% 0%, 83% 1%, 94% 0%, 100% 2%,
+      100% 97%, 96% 100%, 87% 98.5%, 75% 100%, 63% 98.7%, 51% 100%, 39% 98.6%, 27% 100%, 15% 99%, 5% 100%, 0% 97%
+    );
+  }
+
+  .hero .crest {
+    font-size: 1.6rem;
+    letter-spacing: 6px;
+    color: var(--sepia-light);
+    margin-bottom: 6px;
+  }
+
+  .hero h1 {
+    font-family: 'UnifrakturCook', cursive;
+    font-size: clamp(3rem, 12vw, 4.6rem);
+    color: var(--ink);
+    line-height: 1;
+    text-shadow: 1px 1px 0 rgba(139,109,58,0.3);
+  }
+
+  .hero .tagline {
+    font-style: italic;
+    color: var(--sepia);
+    font-size: 1.15rem;
+    margin-top: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .hero .fleuron {
+    color: var(--gold);
+    font-size: 1.4rem;
+    margin-top: 14px;
+    letter-spacing: 12px;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 18px;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.95rem;
+    color: var(--sepia);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--wax); border-color: var(--wax); }
+
+  /* ---------- Compose ---------- */
+  .compose {
+    background: var(--parchment);
+    border: 2px solid var(--edge);
+    padding: 22px 24px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 18px var(--shadow);
+    position: relative;
+  }
+
+  .compose h2 {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 1.3rem;
+    color: var(--wax-dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .compose label {
+    display: block;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.85rem;
+    color: var(--sepia);
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+
+  .compose input[type="text"] {
+    width: 100%;
+    background: rgba(255,255,255,0.25);
+    border: none;
+    border-bottom: 2px solid var(--edge);
+    padding: 8px 4px;
+    font-family: 'IM Fell English', serif;
+    font-size: 1.05rem;
+    color: var(--ink);
+    outline: none;
+  }
+  .compose input[type="text"]:focus { border-color: var(--wax); }
+
+  .compose textarea {
+    width: 100%;
+    min-height: 90px;
+    background: repeating-linear-gradient(
+      var(--parchment) 0px, var(--parchment) 27px,
+      rgba(107,74,43,0.18) 28px, var(--parchment) 29px
+    );
+    border: none;
+    border-bottom: 2px solid var(--edge);
+    padding: 6px 4px;
+    font-family: 'IM Fell English', serif;
+    font-size: 1.08rem;
+    line-height: 29px;
+    color: var(--ink);
+    outline: none;
+    resize: vertical;
+  }
+  .compose textarea:focus { border-color: var(--wax); }
+
+  .compose-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .char-hint { font-size: 0.85rem; color: var(--sepia-light); font-style: italic; }
+
+  .proclaim-btn {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    background: var(--wax);
+    color: var(--parchment);
+    border: none;
+    padding: 10px 22px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--wax-dark), 0 5px 10px var(--shadow);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .proclaim-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 0 var(--wax-dark), 0 8px 14px var(--shadow); }
+  .proclaim-btn:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--wax-dark), 0 3px 6px var(--shadow); }
+
+  /* ---------- Feed ---------- */
+  .feed-status {
+    text-align: center;
+    color: var(--sepia);
+    font-style: italic;
+    padding: 30px 0;
+    font-size: 1.05rem;
+  }
+
+  .post {
+    background: var(--parchment);
+    border: 2px solid var(--edge);
+    padding: 22px 24px 16px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 16px var(--shadow);
+    position: relative;
+    clip-path: polygon(
+      0% 1.5%, 6% 0%, 18% 1%, 30% 0%, 44% 1%, 58% 0%, 72% 1%, 86% 0%, 100% 1.5%,
+      100% 98.5%, 94% 100%, 80% 99%, 66% 100%, 52% 99%, 38% 100%, 24% 99%, 10% 100%, 0% 98.5%
+    );
+  }
+
+  .post-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+  .seal-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 46% 54% 52% 48% / 50% 46% 54% 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'UnifrakturCook', cursive;
+    font-size: 1.3rem;
+    color: #F0E2C0;
+    flex-shrink: 0;
+    box-shadow: inset 0 -3px 6px rgba(0,0,0,0.25), inset 0 2px 3px rgba(255,255,255,0.15), 0 2px 4px var(--shadow);
+  }
+
+  .post-meta { line-height: 1.25; }
+  .post-author {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 1.08rem;
+    color: var(--ink);
+  }
+  .post-date { font-size: 0.85rem; color: var(--sepia-light); font-style: italic; }
+
+  .post-body {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 14px;
+    white-space: pre-wrap;
+  }
+
+  .post-actions { display: flex; gap: 22px; align-items: center; border-top: 1px solid var(--edge); padding-top: 10px; }
+
+  .act-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'IM Fell English', serif;
+    font-size: 0.98rem;
+    color: var(--sepia);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+    position: relative;
+    padding: 4px 2px;
+  }
+  .act-btn:hover { color: var(--wax); }
+  .act-btn .icon { font-size: 1.15rem; }
+  .act-btn.active { color: var(--wax-dark); font-weight: bold; }
+
+  /* Wax seal stamp — signature interaction */
+  .seal-btn { position: relative; overflow: visible; }
+  .wax-stamp {
+    position: absolute;
+    left: -6px; top: -10px;
+    width: 22px; height: 22px;
+    background: radial-gradient(circle at 35% 30%, #B23A3A, var(--wax-dark) 75%);
+    border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.35);
+    opacity: 0;
+    transform: scale(0.3) rotate(-15deg);
+    pointer-events: none;
+  }
+  .wax-stamp::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 100%;
+    width: 4px; height: 8px;
+    background: var(--wax-dark);
+    border-radius: 0 0 4px 4px;
+    transform: translateX(-50%);
+    opacity: 0;
+  }
+  .seal-btn.stamping .wax-stamp {
+    animation: stampDown 0.45s cubic-bezier(.2,1.3,.4,1) forwards;
+  }
+  .seal-btn.stamping .wax-stamp::after {
+    animation: dripDown 0.6s ease-out 0.35s forwards;
+  }
+  @keyframes stampDown {
+    0% { opacity: 0; transform: scale(2) rotate(-15deg); }
+    55% { opacity: 1; transform: scale(0.85) rotate(-6deg); }
+    75% { transform: scale(1.05) rotate(-8deg); }
+    100% { opacity: 1; transform: scale(0.95) rotate(-6deg); }
+  }
+  @keyframes dripDown {
+    0% { opacity: 0.9; height: 0px; }
+    100% { opacity: 0; height: 10px; }
+  }
+
+  /* Reply thread */
+  .reply-box { display: none; margin-top: 12px; }
+  .reply-box.open { display: block; }
+  .reply-box textarea {
+    width: 100%;
+    min-height: 50px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-bottom: 1px solid var(--edge);
+    font-family: 'IM Fell English', serif;
+    font-size: 1rem;
+    padding: 6px 2px;
+    color: var(--ink);
+    outline: none;
+    resize: vertical;
+  }
+  .reply-send {
+    margin-top: 8px;
+    background: none;
+    border: 1px solid var(--gold);
+    color: var(--sepia);
+    font-family: 'IM Fell English SC', serif;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+  .reply-send:hover { background: var(--gold); color: var(--parchment); }
+
+  .reply-list { margin-top: 10px; border-left: 2px solid var(--edge); padding-left: 14px; }
+  .reply-item { margin-bottom: 8px; }
+  .reply-author { font-family: 'IM Fell English SC', serif; font-size: 0.95rem; color: var(--sepia); }
+  .reply-text { font-size: 1rem; color: var(--ink); }
+
+  footer {
+    text-align: center;
+    color: var(--sepia-light);
+    font-style: italic;
+    font-size: 0.9rem;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 30px 18px 24px; }
+    .compose, .post { padding: 18px 16px 14px; }
+    .post-actions { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="crest">❧ ❧ ❧</div>
+    <h1>Parchment</h1>
+    <p class="tagline">Hear ye, hear ye — the town square of olde</p>
+    <div class="fleuron">⚜</div>
+    <a href="index.html" class="back-link">← Back to the Manor Gate</a>
+  </div>
+
+  <div class="compose">
+    <h2>🪶 Pen a Proclamation</h2>
+    <label for="compose-name">Signed by</label>
+    <input type="text" id="compose-name" placeholder="Your name, good sire or madam" maxlength="40">
+    <label for="compose-text">Your words to the square</label>
+    <textarea id="compose-text" placeholder="Speak your mind, for all the town to hear..." maxlength="280"></textarea>
+    <div class="compose-footer">
+      <span class="char-hint" id="char-hint">280 letters remain</span>
+      <button class="proclaim-btn" id="proclaim-btn">Proclaim to the Square</button>
+    </div>
+  </div>
+
+  <div id="feed">
+    <div class="feed-status" id="feed-status">Unfurling the scrolls…</div>
+  </div>
+
+  <footer>— end of today's proclamations —</footer>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc, addDoc, setDoc, onSnapshot,
+    query, orderBy, increment, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDVXiEKtcjyThNyqFb-pRMttBydyq7KeGg",
+    authDomain: "abigailg1048.firebaseapp.com",
+    projectId: "abigailg1048",
+    storageBucket: "abigailg1048.firebasestorage.app",
+    messagingSenderId: "269572512400",
+    appId: "1:269572512400:web:05cb0eb6dbc5c6421c1615",
+    measurementId: "G-7E05F32959"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const FEED = document.getElementById('feed');
+
+  // ---------- local per-device flags (own seal/repost state only) ----------
+  const LS_SEALED   = 'parchment_sealed_local';
+  const LS_REPOSTED = 'parchment_reposted_local';
+
+  function loadJSON(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+  let localSealed   = loadJSON(LS_SEALED, {});
+  let localReposted = loadJSON(LS_REPOSTED, {});
+
+  // ---------- shared state (from Firestore, live) ----------
+  let countsMap = {};      // { [postId]: { seals, reposts } }
+  let repliesMap = {};     // { [postId]: [{author, text}] }
+  let proclamations = [];  // shared user posts, newest first
+  let filePosts = [];      // loaded once from posts/*.txt
+
+  function hashCount(str, mod) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
+    return h % mod;
+  }
+  function initial(name) { return (name.trim()[0] || '?').toUpperCase(); }
+  function sealColor(name) {
+    const colors = ['#8C1F28', '#52602F', '#9C7A2E', '#6B4A2B', '#4A5D6B'];
+    return colors[hashCount(name, colors.length)];
+  }
+  function escapeHTML(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ---------- rendering ----------
+  function renderPost(post) {
+    const baseSeals   = post.source === 'file' ? 3 + hashCount(post.id + 's', 22) : 0;
+    const baseReposts = post.source === 'file' ? hashCount(post.id + 'r', 8) : 0;
+    const shared = countsMap[post.id] || { seals: 0, reposts: 0 };
+    const totalSeals   = baseSeals + (shared.seals || 0);
+    const totalReposts = baseReposts + (shared.reposts || 0);
+    const userSealed   = !!localSealed[post.id];
+    const userReposted = !!localReposted[post.id];
+    const postReplies  = repliesMap[post.id] || [];
+
+    const el = document.createElement('article');
+    el.className = 'post';
+    el.dataset.postId = post.id;
+    el.innerHTML = `
+      <div class="post-head">
+        <div class="seal-avatar" style="background:${sealColor(post.author)}">${initial(post.author)}</div>
+        <div class="post-meta">
+          <div class="post-author">${escapeHTML(post.author)}</div>
+          <div class="post-date">${escapeHTML(post.date)}</div>
+        </div>
+      </div>
+      <div class="post-body">${escapeHTML(post.content)}</div>
+      <div class="post-actions">
+        <button class="act-btn seal-btn ${userSealed ? 'active' : ''}" data-action="seal" data-id="${post.id}">
+          <span class="wax-stamp"></span>
+          <span class="icon">🕯</span> <span class="seal-count">${totalSeals}</span>
+        </button>
+        <button class="act-btn ${userReposted ? 'active' : ''}" data-action="repost" data-id="${post.id}">
+          <span class="icon">📯</span> <span class="repost-count">${totalReposts}</span>
+        </button>
+        <button class="act-btn" data-action="reply" data-id="${post.id}">
+          <span class="icon">✒️</span> <span class="reply-count-num">${postReplies.length}</span>
+        </button>
+      </div>
+      <div class="reply-box" data-id="${post.id}">
+        <textarea placeholder="Write your reply..." maxlength="200"></textarea>
+        <button class="reply-send" data-id="${post.id}">Send Reply</button>
+        <div class="reply-list">
+          ${postReplies.map(r => `
+            <div class="reply-item">
+              <span class="reply-author">${escapeHTML(r.author)}:</span>
+              <span class="reply-text">${escapeHTML(r.text)}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    `;
+    return el;
+  }
+
+  function allPostsOrdered() {
+    return [...proclamations, ...filePosts];
+  }
+
+  function fullRender() {
+    const openIds = new Set(
+      Array.from(FEED.querySelectorAll('.reply-box.open')).map(b => b.dataset.id)
+    );
+    const posts = allPostsOrdered();
+    FEED.innerHTML = '';
+    if (posts.length === 0) {
+      FEED.innerHTML = '<div class="feed-status">The town square stands empty. Be the first to proclaim!</div>';
+      return;
+    }
+    posts.forEach(p => FEED.appendChild(renderPost(p)));
+    openIds.forEach(id => {
+      const box = FEED.querySelector(`.reply-box[data-id="${CSS.escape(id)}"]`);
+      if (box) box.classList.add('open');
+    });
+  }
+
+  // Lightweight updates so realtime count/reply changes don't blow away open reply boxes
+  function updateCountsUI(id) {
+    const el = FEED.querySelector(`.post[data-post-id="${CSS.escape(id)}"]`);
+    if (!el) return;
+    const post = allPostsOrdered().find(p => p.id === id);
+    if (!post) return;
+    const baseSeals   = post.source === 'file' ? 3 + hashCount(post.id + 's', 22) : 0;
+    const baseReposts = post.source === 'file' ? hashCount(post.id + 'r', 8) : 0;
+    const shared = countsMap[id] || { seals: 0, reposts: 0 };
+    el.querySelector('.seal-count').textContent = baseSeals + (shared.seals || 0);
+    el.querySelector('.repost-count').textContent = baseReposts + (shared.reposts || 0);
+  }
+
+  function updateRepliesUI(id) {
+    const el = FEED.querySelector(`.post[data-post-id="${CSS.escape(id)}"]`);
+    if (!el) return;
+    const list = repliesMap[id] || [];
+    el.querySelector('.reply-count-num').textContent = list.length;
+    el.querySelector('.reply-list').innerHTML = list.map(r => `
+      <div class="reply-item">
+        <span class="reply-author">${escapeHTML(r.author)}:</span>
+        <span class="reply-text">${escapeHTML(r.text)}</span>
+      </div>`).join('');
+  }
+
+  // ---------- interactions ----------
+  FEED.addEventListener('click', function(e) {
+    const btn = e.target.closest('.act-btn');
+    if (btn) {
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+
+      if (action === 'seal') {
+        const already = !!localSealed[id];
+        localSealed[id] = !already;
+        saveJSON(LS_SEALED, localSealed);
+        btn.classList.toggle('active', !already);
+        if (!already) {
+          btn.classList.remove('stamping');
+          void btn.offsetWidth;
+          btn.classList.add('stamping');
+        }
+        setDoc(doc(db, 'counts', id), { seals: increment(already ? -1 : 1) }, { merge: true })
+          .catch(err => console.error('seal write failed:', err));
+      }
+
+      if (action === 'repost') {
+        const already = !!localReposted[id];
+        localReposted[id] = !already;
+        saveJSON(LS_REPOSTED, localReposted);
+        btn.classList.toggle('active', !already);
+        setDoc(doc(db, 'counts', id), { reposts: increment(already ? -1 : 1) }, { merge: true })
+          .catch(err => console.error('repost write failed:', err));
+      }
+
+      if (action === 'reply') {
+        const box = FEED.querySelector(`.reply-box[data-id="${CSS.escape(id)}"]`);
+        box.classList.toggle('open');
+      }
+      return;
+    }
+
+    const sendBtn = e.target.closest('.reply-send');
+    if (sendBtn) {
+      const id = sendBtn.dataset.id;
+      const box = sendBtn.closest('.reply-box');
+      const textarea = box.querySelector('textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+      const author = document.getElementById('compose-name').value.trim() || 'A Passerby';
+      sendBtn.disabled = true;
+      addDoc(collection(db, 'replies'), { postId: id, author, text, createdAt: serverTimestamp() })
+        .then(() => { textarea.value = ''; })
+        .catch(err => console.error('reply write failed:', err))
+        .finally(() => { sendBtn.disabled = false; });
+    }
+  });
+
+  // ---------- compose ----------
+  const nameInput = document.getElementById('compose-name');
+  const textInput = document.getElementById('compose-text');
+  const charHint = document.getElementById('char-hint');
+  const proclaimBtn = document.getElementById('proclaim-btn');
+
+  textInput.addEventListener('input', () => {
+    const remaining = 280 - textInput.value.length;
+    charHint.textContent = `${remaining} letters remain`;
+  });
+
+  proclaimBtn.addEventListener('click', () => {
+    const author = nameInput.value.trim() || 'Anonymous of the Square';
+    const content = textInput.value.trim();
+    if (!content) { textInput.focus(); return; }
+    proclaimBtn.disabled = true;
+    proclaimBtn.textContent = 'Sealing…';
+    addDoc(collection(db, 'proclamations'), { author, content, createdAt: serverTimestamp() })
+      .then(() => {
+        textInput.value = '';
+        charHint.textContent = '280 letters remain';
+      })
+      .catch(err => {
+        console.error('proclamation write failed:', err);
+        alert('Could not post right now — check your connection and try again.');
+      })
+      .finally(() => {
+        proclaimBtn.disabled = false;
+        proclaimBtn.textContent = 'Proclaim to the Square';
+      });
+  });
+
+  // ---------- loading file-based posts (once) ----------
+  async function loadFilePosts() {
+    try {
+      const manifestRes = await fetch('posts/manifest.json');
+      if (!manifestRes.ok) throw new Error('no manifest');
+      const filenames = await manifestRes.json();
+      const posts = await Promise.all(filenames.map(async (fname) => {
+        const res = await fetch('posts/' + fname);
+        if (!res.ok) return null;
+        const raw = await res.text();
+        const lines = raw.split('\n');
+        const author = (lines[0] || 'Unknown').trim();
+        const date = (lines[1] || '').trim();
+        const content = lines.slice(2).join('\n').trim();
+        return { id: fname, author, date, content, source: 'file' };
+      }));
+      return posts.filter(Boolean);
+    } catch (e) {
+      console.warn('Could not load posts/manifest.json:', e);
+      return [];
+    }
+  }
+
+  // ---------- live Firestore listeners ----------
+  function watchProclamations() {
+    const q = query(collection(db, 'proclamations'), orderBy('createdAt', 'desc'));
+    onSnapshot(q, (snap) => {
+      proclamations = snap.docs.map(d => {
+        const data = d.data();
+        const ts = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : new Date();
+        return {
+          id: d.id,
+          author: data.author,
+          content: data.content,
+          date: ts.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
+          source: 'proclaim'
+        };
+      });
+      fullRender();
+    }, (err) => console.error('proclamations listener failed:', err));
+  }
+
+  function watchCounts() {
+    onSnapshot(collection(db, 'counts'), (snap) => {
+      snap.docChanges().forEach(change => {
+        countsMap[change.doc.id] = change.doc.data();
+        updateCountsUI(change.doc.id);
+      });
+    }, (err) => console.error('counts listener failed:', err));
+  }
+
+  function watchReplies() {
+    onSnapshot(collection(db, 'replies'), (snap) => {
+      const grouped = {};
+      snap.docs.forEach(d => {
+        const data = d.data();
+        if (!grouped[data.postId]) grouped[data.postId] = [];
+        grouped[data.postId].push({ author: data.author, text: data.text });
+      });
+      repliesMap = grouped;
+      Object.keys(grouped).forEach(id => updateRepliesUI(id));
+    }, (err) => console.error('replies listener failed:', err));
+  }
+
+  async function init() {
+    filePosts = await loadFilePosts();
+    fullRender();
+    watchProclamations();
+    watchCounts();
+    watchReplies();
+  }
+
+  init();
+</script>
+</body>
+</html>
