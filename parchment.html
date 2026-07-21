@@ -338,9 +338,27 @@
   .reply-send:hover { background: var(--gold); color: var(--parchment); }
 
   .reply-list { margin-top: 10px; border-left: 2px solid var(--edge); padding-left: 14px; }
-  .reply-item { margin-bottom: 8px; }
+  .reply-item { margin-bottom: 4px; }
   .reply-author { font-family: 'IM Fell English SC', serif; font-size: 0.95rem; color: var(--sepia); }
   .reply-text { font-size: 1rem; color: var(--ink); }
+  .reply-node { margin-bottom: 10px; }
+  .reply-to-btn {
+    background: none;
+    border: none;
+    color: var(--sepia-light);
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-left: 8px;
+    padding: 0;
+  }
+  .reply-to-btn:hover { color: var(--wax); }
+  .reply-box.nested {
+    margin-top: 6px;
+    margin-bottom: 4px;
+  }
+  .reply-box.nested textarea { min-height: 40px; font-size: 0.95rem; }
 
   footer {
     text-align: center;
@@ -363,13 +381,13 @@
   <div class="hero">
     <div class="crest">❧ ❧ ❧</div>
     <h1>Parchment</h1>
-    <p class="tagline">stay in character, dont harass others - this is a small project just for fun</p>
+    <p class="tagline">Hear ye, hear ye — the town square of olde</p>
     <div class="fleuron">⚜</div>
-    <a href="index.html" class="back-link">← Return to the main website</a>
+    <a href="index.html" class="back-link">← Back to the Manor Gate</a>
   </div>
 
   <div class="compose">
-    <h2>🪶 Write your tale</h2>
+    <h2>🪶 Pen a Proclamation</h2>
     <label for="compose-name">Signed by</label>
     <input type="text" id="compose-name" placeholder="Your name, good sire or madam" maxlength="40">
     <label for="compose-text">Your words to the square</label>
@@ -442,6 +460,37 @@
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
+  // ---------- reply threading ----------
+  function buildReplyTree(list) {
+    const byParent = {};
+    list.forEach(r => {
+      const key = r.parentId || 'root';
+      if (!byParent[key]) byParent[key] = [];
+      byParent[key].push(r);
+    });
+    return byParent;
+  }
+
+  function renderReplyNodes(byParent, parentKey, postId) {
+    const children = byParent[parentKey] || [];
+    return children.map(r => `
+      <div class="reply-node">
+        <div class="reply-item">
+          <span class="reply-author">${escapeHTML(r.author)}:</span>
+          <span class="reply-text">${escapeHTML(r.text)}</span>
+          <button class="reply-to-btn" data-parent-id="${r.id}" data-post-id="${postId}">↳ reply</button>
+        </div>
+        <div class="reply-box nested" data-parent-id="${r.id}" data-post-id="${postId}">
+          <textarea placeholder="Reply to ${escapeHTML(r.author)}..." maxlength="200"></textarea>
+          <button class="reply-send-nested" data-parent-id="${r.id}" data-post-id="${postId}">Send Reply</button>
+        </div>
+        <div class="reply-list">
+          ${renderReplyNodes(byParent, r.id, postId)}
+        </div>
+      </div>
+    `).join('');
+  }
+
   // ---------- rendering ----------
   function renderPost(post) {
     const baseSeals   = post.source === 'file' ? 3 + hashCount(post.id + 's', 22) : 0;
@@ -452,6 +501,7 @@
     const userSealed   = !!localSealed[post.id];
     const userReposted = !!localReposted[post.id];
     const postReplies  = repliesMap[post.id] || [];
+    const replyTree    = buildReplyTree(postReplies);
 
     const el = document.createElement('article');
     el.className = 'post';
@@ -481,11 +531,7 @@
         <textarea placeholder="Write your reply..." maxlength="200"></textarea>
         <button class="reply-send" data-id="${post.id}">Send Reply</button>
         <div class="reply-list">
-          ${postReplies.map(r => `
-            <div class="reply-item">
-              <span class="reply-author">${escapeHTML(r.author)}:</span>
-              <span class="reply-text">${escapeHTML(r.text)}</span>
-            </div>`).join('')}
+          ${renderReplyNodes(replyTree, 'root', post.id)}
         </div>
       </div>
     `;
@@ -530,12 +576,19 @@
     const el = FEED.querySelector(`.post[data-post-id="${CSS.escape(id)}"]`);
     if (!el) return;
     const list = repliesMap[id] || [];
+    const tree = buildReplyTree(list);
+
+    const openParentIds = new Set(
+      Array.from(el.querySelectorAll('.reply-box.nested.open')).map(b => b.dataset.parentId)
+    );
+
     el.querySelector('.reply-count-num').textContent = list.length;
-    el.querySelector('.reply-list').innerHTML = list.map(r => `
-      <div class="reply-item">
-        <span class="reply-author">${escapeHTML(r.author)}:</span>
-        <span class="reply-text">${escapeHTML(r.text)}</span>
-      </div>`).join('');
+    el.querySelector('.reply-list').innerHTML = renderReplyNodes(tree, 'root', id);
+
+    openParentIds.forEach(pid => {
+      const box = el.querySelector(`.reply-box.nested[data-parent-id="${CSS.escape(pid)}"]`);
+      if (box) box.classList.add('open');
+    });
   }
 
   // ---------- interactions ----------
@@ -584,10 +637,39 @@
       if (!text) return;
       const author = document.getElementById('compose-name').value.trim() || 'A Passerby';
       sendBtn.disabled = true;
-      addDoc(collection(db, 'replies'), { postId: id, author, text, createdAt: serverTimestamp() })
+      addDoc(collection(db, 'replies'), { postId: id, parentId: null, author, text, createdAt: serverTimestamp() })
         .then(() => { textarea.value = ''; })
         .catch(err => console.error('reply write failed:', err))
         .finally(() => { sendBtn.disabled = false; });
+      return;
+    }
+
+    const replyToBtn = e.target.closest('.reply-to-btn');
+    if (replyToBtn) {
+      const pid = replyToBtn.dataset.parentId;
+      const postId = replyToBtn.dataset.postId;
+      const nestedBox = FEED.querySelector(
+        `.post[data-post-id="${CSS.escape(postId)}"] .reply-box.nested[data-parent-id="${CSS.escape(pid)}"]`
+      );
+      if (nestedBox) nestedBox.classList.toggle('open');
+      return;
+    }
+
+    const sendNestedBtn = e.target.closest('.reply-send-nested');
+    if (sendNestedBtn) {
+      const pid = sendNestedBtn.dataset.parentId;
+      const postId = sendNestedBtn.dataset.postId;
+      const box = sendNestedBtn.closest('.reply-box.nested');
+      const textarea = box.querySelector('textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+      const author = document.getElementById('compose-name').value.trim() || 'A Passerby';
+      sendNestedBtn.disabled = true;
+      addDoc(collection(db, 'replies'), { postId, parentId: pid, author, text, createdAt: serverTimestamp() })
+        .then(() => { textarea.value = ''; })
+        .catch(err => console.error('nested reply write failed:', err))
+        .finally(() => { sendNestedBtn.disabled = false; });
+      return;
     }
   });
 
@@ -675,15 +757,22 @@
   }
 
   function watchReplies() {
-    onSnapshot(collection(db, 'replies'), (snap) => {
+    const q = query(collection(db, 'replies'), orderBy('createdAt', 'asc'));
+    onSnapshot(q, (snap) => {
       const grouped = {};
       snap.docs.forEach(d => {
         const data = d.data();
         if (!grouped[data.postId]) grouped[data.postId] = [];
-        grouped[data.postId].push({ author: data.author, text: data.text });
+        grouped[data.postId].push({
+          id: d.id,
+          parentId: data.parentId || null,
+          author: data.author,
+          text: data.text
+        });
       });
       repliesMap = grouped;
       Object.keys(grouped).forEach(id => updateRepliesUI(id));
+      // also refresh replies for posts that just went from 0 -> tracked (fullRender handles first paint)
     }, (err) => console.error('replies listener failed:', err));
   }
 
