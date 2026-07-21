@@ -1,8 +1,12 @@
 [
-  { "file": "e wanks.flac", "title": "Please invest in the e wank station", "artist": "abigailg1048" },
-  { "file": "Unboxing with Abi", "title": "Unboxing with Abi", "artist": "abigailg1048" },
-  { "file": "the contact name song (2) (1).flac", "title": "Noah's Theme", "artist": "abigailg1048" },
-  { "file": "the contact name song full.flac", "title": "The Contact Name Song", "artist": "abigailg1048" },
-  { "file": "abigail.flac", "title": "abigail abigail abigail abigail abigail abigail abigail", "artist": "abigailg1048" },
-  { "file": "noahs a slag.flac", "title": "Noah's a Slag", "artist": "abigailg1048" },
+  {
+    "album": "abigailg1048 Originals",
+    "folder": "tracks",
+    "cover": "cover.jpg",
+    "tracks": [
+      { "file": "abigail.flac", "title": "Abigail", "artist": "abigailg1048" },
+      { "file": "contact_name_song_full.flac", "title": "The Contact Name Song (Full)", "artist": "abigailg1048" },
+      { "file": "contact_name_song_v2.flac", "title": "The Contact Name Song (Version 2)", "artist": "abigailg1048" }
+    ]
+  }
 ]
