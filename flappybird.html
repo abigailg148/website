@@ -177,6 +177,117 @@
             font-size: 14px;
         }
 
+        #score-entry {
+            display: none;
+            margin-top: 15px;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #player-name-input {
+            padding: 10px 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #player-name-input:focus { border-color: var(--accent); }
+
+        #submit-score-btn {
+            padding: 10px 16px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--purple) 0%, #B57EDC 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #submit-score-btn:hover:not(:disabled) { transform: translateY(-2px); }
+        #submit-score-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        #save-confirm {
+            font-size: 12px;
+            color: var(--green);
+            font-weight: 600;
+            text-align: center;
+            min-height: 16px;
+        }
+
+        .leaderboard-section {
+            width: 100%;
+            max-width: 580px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 3px solid white;
+            padding: 20px 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 24px;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+
+        #leaderboard-list {
+            list-style: none;
+            counter-reset: rank;
+        }
+
+        #leaderboard-list li {
+            counter-increment: rank;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-family: 'DM Sans', sans-serif;
+        }
+        #leaderboard-list li:last-child { border-bottom: none; }
+
+        #leaderboard-list li::before {
+            content: counter(rank);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        #leaderboard-list li:nth-child(1)::before { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        #leaderboard-list li:nth-child(2)::before { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
+        #leaderboard-list li:nth-child(3)::before { background: linear-gradient(135deg, #CD7F32, #B8732C); }
+
+        .lb-name {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .lb-score {
+            font-weight: 700;
+            color: var(--purple);
+            font-family: 'Fredoka', sans-serif;
+        }
+        .lb-empty {
+            color: #999;
+            font-style: italic;
+            justify-content: center;
+            text-align: center;
+        }
+        .lb-empty::before { display: none; }
+
         @media (max-width: 900px) {
             .game-container {
                 flex-direction: column;
@@ -291,11 +402,42 @@
                 <strong>Press SPACE, TAP or CLICK to flap!</strong>
                 Help the duck avoid the pipes and get the highest score!
             </div>
+            <div id="score-entry">
+                <input type="text" id="player-name-input" placeholder="Enter your name" maxlength="20">
+                <button id="submit-score-btn">🏆 Save Score</button>
+                <div id="save-confirm"></div>
+            </div>
             <button id="retry-btn">🔄 Play Again</button>
         </div>
     </div>
 
-    <script>
+    <div class="leaderboard-section">
+        <h3>🏆 Top 10 Scores</h3>
+        <ol id="leaderboard-list">
+            <li class="lb-empty">Loading scores…</li>
+        </ol>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getFirestore, collection, addDoc, onSnapshot,
+            query, orderBy, limit, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVXiEKtcjyThNyqFb-pRMttBydyq7KeGg",
+            authDomain: "abigailg1048.firebaseapp.com",
+            projectId: "abigailg1048",
+            storageBucket: "abigailg1048.firebasestorage.app",
+            messagingSenderId: "269572512400",
+            appId: "1:269572512400:web:05cb0eb6dbc5c6421c1615",
+            measurementId: "G-7E05F32959"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         // Canvas Setup
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
@@ -303,6 +445,68 @@
         // Retry Button Setup
         const retryBtn = document.getElementById("retry-btn");
         retryBtn.addEventListener("click", startGame);
+
+        // Leaderboard elements
+        const scoreEntry = document.getElementById("score-entry");
+        const nameInput = document.getElementById("player-name-input");
+        const submitScoreBtn = document.getElementById("submit-score-btn");
+        const saveConfirm = document.getElementById("save-confirm");
+        const leaderboardList = document.getElementById("leaderboard-list");
+
+        // Remember the player's name between visits
+        const savedName = localStorage.getItem('flappyDuckName');
+        if (savedName) nameInput.value = savedName;
+
+        function escapeHTML(s) {
+            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        function renderLeaderboard(scores) {
+            if (scores.length === 0) {
+                leaderboardList.innerHTML = '<li class="lb-empty">No scores yet — be the first!</li>';
+                return;
+            }
+            leaderboardList.innerHTML = scores.map(s => `
+                <li>
+                    <span class="lb-name">${escapeHTML(s.name)}</span>
+                    <span class="lb-score">${s.score}</span>
+                </li>
+            `).join('');
+        }
+
+        function watchLeaderboard() {
+            const q = query(collection(db, 'flappyLeaderboard'), orderBy('score', 'desc'), limit(10));
+            onSnapshot(q, (snap) => {
+                const scores = snap.docs.map(d => d.data());
+                renderLeaderboard(scores);
+            }, (err) => {
+                console.error('Leaderboard listener failed:', err);
+                leaderboardList.innerHTML = '<li class="lb-empty">Could not load scores.</li>';
+            });
+        }
+
+        submitScoreBtn.addEventListener('click', () => {
+            const name = nameInput.value.trim();
+            if (!name) { nameInput.focus(); return; }
+            localStorage.setItem('flappyDuckName', name);
+            submitScoreBtn.disabled = true;
+            submitScoreBtn.textContent = 'Saving…';
+            addDoc(collection(db, 'flappyLeaderboard'), {
+                name,
+                score,
+                createdAt: serverTimestamp()
+            }).then(() => {
+                saveConfirm.textContent = '✓ Score saved!';
+                submitScoreBtn.textContent = '🏆 Save Score';
+            }).catch(err => {
+                console.error('Score save failed:', err);
+                saveConfirm.textContent = 'Could not save — try again.';
+                submitScoreBtn.disabled = false;
+                submitScoreBtn.textContent = '🏆 Save Score';
+            });
+        });
+
+        watchLeaderboard();
 
         // Score Variables
         let score = 0;
@@ -326,6 +530,10 @@
             score = 0;
             isGameOver = false;
             retryBtn.style.display = "none";
+            scoreEntry.style.display = "none";
+            saveConfirm.textContent = "";
+            submitScoreBtn.disabled = false;
+            submitScoreBtn.textContent = '🏆 Save Score';
             gameLoop();
         }
 
@@ -586,6 +794,7 @@
             
             ctx.textAlign = "left";
             retryBtn.style.display = "block";
+            scoreEntry.style.display = "flex";
         }
 
         // Start the game for the first time
