@@ -1,19 +1,45 @@
+
 [
   {
     "album": "The Contact Name Song",
     "folder": "tracks",
     "cover": "contactname.jpg",
     "tracks": [
-      { "file": "contact name song (2) (1).flac", "title": "Noahs Theme", "artist": "abigailg1048" },
-      { "file": "contact name song full.flac", "title": "The Contact Name Song", "artist": "abigailg1048" },
-      { "file": "abigail.flac", "title": "Abigail", "artist": "abigailg1048" },
-      { "file": "noahs a slag.flac", "title": "Noahs a Slag", "artist": "abigailg1048" }
+      {
+        "file": "contact name song (2) (1).flac",
+        "title": "Noahs Theme",
+        "artist": "abigailg1048"
+      },
+      {
+        "file": "contact name song full.flac",
+        "title": "The Contact Name Song",
+        "artist": "abigailg1048"
+      },
+      {
+        "file": "abigail.flac",
+        "title": "Abigail",
+        "artist": "abigailg1048"
+      },
+      {
+        "file": "noahs a slag.flac",
+        "title": "Noahs a Slag",
+        "artist": "abigailg1048"
+      }
+    ]
+  },
+  {
+    "album": "please invest in the e wank station",
+    "folder": "tracks",
+    "cover": "ewank.jpg",
+    "tracks": [
+      {
+        "file": "e wanks.flac",
+        "title": "please invest in the e wank station",
+        "artist": "abigailg1048"
+      }
     ]
   }
-  [{
-    "album": "please invest in the e wank station",
-    "folder":"tracks",
-    "cover": "ewank.jpg",
-    "tracks":[
-  { "file": "e wanks.flac", "title": "please invest in the e wank station", "artist": "abigailg1048" }]
 ]
+```
+
+This is now valid JSON and should parse correctly.
