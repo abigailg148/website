@@ -4,8 +4,8 @@
     "folder": "tracks",
     "cover": "contactname.jpg",
     "tracks": [
-      { "file": "contact_name_song_v2.flac", "title": "Noahs Theme", "artist": "abigailg1048" },
-      { "file": "contact_name_song_full.flac", "title": "The Contact Name Song", "artist": "abigailg1048" },
+      { "file": "contact name song (2) (1).flac", "title": "Noahs Theme", "artist": "abigailg1048" },
+      { "file": "contact name song full.flac", "title": "The Contact Name Song", "artist": "abigailg1048" },
       { "file": "abigail.flac", "title": "Abigail", "artist": "abigailg1048" },
       { "file": "noahs a slag.flac", "title": "Noahs a Slag", "artist": "abigailg1048" }
     ]
