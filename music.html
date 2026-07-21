@@ -31,7 +31,6 @@
     overflow-x: hidden;
   }
 
-  /* floating confetti decorations */
   .deco {
     position: fixed;
     pointer-events: none;
@@ -49,47 +48,33 @@
 
   .wrap { max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; }
 
+  /* ---------- Hero: real logo image ---------- */
   .hero {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--lavender) 60%, var(--mint) 100%);
     border-radius: 28px;
-    padding: 42px 30px 34px;
-    text-align: center;
+    overflow: hidden;
     box-shadow: 0 10px 30px var(--shadow);
     margin-bottom: 8px;
-    position: relative;
-    overflow: hidden;
+    background: var(--card);
   }
-
-  .hero::after {
-    content: '♪ ♫ ♪';
-    position: absolute;
-    font-size: 6rem;
-    color: rgba(255,255,255,0.25);
-    right: -10px;
-    bottom: -30px;
-    font-family: 'Fredoka', sans-serif;
-    letter-spacing: 10px;
+  .hero img.logo-banner {
+    width: 100%;
+    display: block;
   }
-
-  .hero h1 {
-    font-family: 'Fredoka', sans-serif;
-    font-weight: 700;
-    font-size: clamp(2.2rem, 7vw, 3.4rem);
-    color: white;
-    text-shadow: 0 3px 0 rgba(44,62,80,0.15);
-    letter-spacing: -0.5px;
+  .hero .tagline-bar {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--lavender) 60%, var(--mint) 100%);
+    padding: 16px 20px 20px;
+    text-align: center;
   }
-
   .hero .tagline {
-    font-size: 1.1rem;
-    color: rgba(255,255,255,0.95);
-    margin-top: 8px;
+    font-family: 'Fredoka', sans-serif;
     font-weight: 600;
+    font-size: 1.15rem;
+    color: white;
+    text-shadow: 0 2px 0 rgba(44,62,80,0.15);
   }
-
   .back-link {
     display: inline-block;
-    margin-top: 16px;
+    margin-top: 12px;
     font-weight: 700;
     font-size: 0.9rem;
     color: white;
@@ -107,6 +92,9 @@
     font-size: 1.3rem;
     color: var(--text);
     margin: 34px 4px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .status-msg {
@@ -127,13 +115,14 @@
     font-size: 0.9em;
   }
 
+  /* ---------- Album grid ---------- */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 26px 20px;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 30px 22px;
   }
 
-  .track-card {
+  .album-card {
     background: var(--card);
     border-radius: 18px;
     padding: 14px 14px 16px;
@@ -142,12 +131,11 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
     position: relative;
   }
-  .track-card:nth-child(4n+1) { transform: rotate(-2deg); }
-  .track-card:nth-child(4n+2) { transform: rotate(1.5deg); }
-  .track-card:nth-child(4n+3) { transform: rotate(-1deg); }
-  .track-card:nth-child(4n+4) { transform: rotate(2deg); }
-  .track-card:hover { transform: translateY(-6px) rotate(0deg) scale(1.03); box-shadow: 0 14px 26px var(--shadow); z-index: 2; }
-  .track-card.active { outline: 3px solid var(--blue); }
+  .album-card:nth-child(4n+1) { transform: rotate(-2deg); }
+  .album-card:nth-child(4n+2) { transform: rotate(1.5deg); }
+  .album-card:nth-child(4n+3) { transform: rotate(-1deg); }
+  .album-card:nth-child(4n+4) { transform: rotate(2deg); }
+  .album-card:hover { transform: translateY(-6px) rotate(0deg) scale(1.03); box-shadow: 0 14px 26px var(--shadow); z-index: 2; }
 
   .tape {
     position: absolute;
@@ -161,22 +149,15 @@
     box-shadow: 0 2px 4px rgba(44,62,80,0.1);
   }
 
-  .art {
+  .cover-wrap {
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 12px;
     margin-bottom: 12px;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
-  }
-
-  .art .note {
-    font-size: 2rem;
-    color: rgba(255,255,255,0.55);
-    font-family: 'Fredoka', sans-serif;
+    background-size: cover;
+    background-position: center;
   }
 
   .play-overlay {
@@ -189,12 +170,11 @@
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .track-card:hover .play-overlay,
-  .track-card.active .play-overlay { opacity: 1; }
+  .album-card:hover .play-overlay { opacity: 1; }
 
   .play-icon {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: white;
     display: flex;
@@ -205,19 +185,108 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   }
 
-  .track-title {
+  .album-title {
     font-family: 'Fredoka', sans-serif;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.02rem;
     color: var(--text);
     line-height: 1.25;
     margin-bottom: 2px;
   }
-  .track-artist {
+  .album-count {
     font-size: 0.85rem;
     color: var(--text-soft);
     font-weight: 600;
   }
+
+  /* ---------- Album detail (tracklist) ---------- */
+  .album-detail {
+    display: none;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 22px var(--shadow);
+    margin-bottom: 30px;
+  }
+  .album-detail.show { display: block; }
+
+  .detail-head {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .detail-cover {
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 6px 14px var(--shadow);
+    flex-shrink: 0;
+  }
+  .detail-title {
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+  }
+  .detail-sub {
+    color: var(--text-soft);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+  .back-to-albums {
+    background: none;
+    border: none;
+    color: var(--text-soft);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+  }
+  .back-to-albums:hover { color: var(--text); }
+
+  .play-album-btn {
+    margin-top: 10px;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: 24px;
+    padding: 8px 20px;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .play-album-btn:hover { background: var(--text); transform: translateY(-2px); }
+
+  .track-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .track-row:hover { background: rgba(146, 209, 255, 0.15); }
+  .track-row.active { background: rgba(146, 209, 255, 0.3); }
+
+  .track-num {
+    width: 22px;
+    text-align: center;
+    color: var(--text-soft);
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .track-row.active .track-num { color: var(--blue); }
+
+  .track-row-title { font-weight: 700; font-size: 0.98rem; }
+  .track-row-artist { font-size: 0.83rem; color: var(--text-soft); font-weight: 600; }
 
   /* ---------- Now Playing bar ---------- */
   .now-playing {
@@ -241,12 +310,7 @@
     align-items: center;
   }
 
-  .np-track {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
-  }
+  .np-track { display: flex; align-items: center; gap: 12px; min-width: 0; }
 
   .vinyl {
     width: 46px;
@@ -262,9 +326,12 @@
   .vinyl::after {
     content: '';
     position: absolute;
-    inset: 32%;
+    inset: 30%;
     border-radius: 50%;
-    background: var(--label-color, var(--blue));
+    background-image: var(--label-img, none);
+    background-size: cover;
+    background-position: center;
+    background-color: var(--blue);
   }
   .vinyl.spinning { animation: spin 3s linear infinite; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -328,9 +395,10 @@
   }
 
   @media (max-width: 480px) {
-    .hero { padding: 30px 18px 26px; border-radius: 20px; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px 14px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 22px 14px; }
     .now-playing { padding: 10px 12px; }
+    .detail-head { gap: 14px; }
+    .detail-cover { width: 84px; height: 84px; }
   }
 </style>
 </head>
@@ -342,15 +410,19 @@
 
 <div class="wrap">
   <div class="hero">
-    <h1>abigailg1048</h1>
-    <p class="tagline">✨ on repeat ✨</p>
-    <a href="index.html" class="back-link">← back to the site</a>
+    <img class="logo-banner" src="assets/abigailg1048-logo.png" alt="abigailg1048">
+    <div class="tagline-bar">
+      <div class="tagline">✨ on repeat ✨</div>
+      <a href="index.html" class="back-link">← back to the site</a>
+    </div>
   </div>
 
-  <div class="section-label">🎧 the tracklist</div>
+  <div class="section-label">💿 albums</div>
   <div id="content">
     <div class="status-msg">Tuning the instruments…</div>
   </div>
+
+  <div class="album-detail" id="album-detail"></div>
 </div>
 
 <div class="now-playing" id="now-playing">
@@ -388,9 +460,8 @@
 </div>
 
 <script>
-  const PALETTE = ['#92D1FF', '#DED5FF', '#B3FFEF', '#C1F2FF'];
-
   const content = document.getElementById('content');
+  const albumDetail = document.getElementById('album-detail');
   const nowPlaying = document.getElementById('now-playing');
   const vinyl = document.getElementById('vinyl');
   const npTitle = document.getElementById('np-title');
@@ -408,24 +479,12 @@
   const AUDIO = new Audio();
   AUDIO.volume = 0.8;
 
-  let tracks = [];
-  let currentIndex = -1;
+  let albums = [];
+  let currentAlbumIndex = -1;
+  let currentTrackIndex = -1;
   let isShuffle = false;
   let isRepeat = false;
   let isSeeking = false;
-
-  function hashCount(str, mod) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) { h = (h * 31 + str.charCodeAt(i)) >>> 0; }
-    return h % mod;
-  }
-
-  function gradientFor(title) {
-    const i = hashCount(title, PALETTE.length);
-    const j = (i + 1 + hashCount(title + 'x', PALETTE.length - 1)) % PALETTE.length;
-    const angle = 45 + hashCount(title + 'a', 270);
-    return { css: `linear-gradient(${angle}deg, ${PALETTE[i]}, ${PALETTE[j]})`, color: PALETTE[i] };
-  }
 
   function formatTime(sec) {
     if (!isFinite(sec) || sec < 0) return '0:00';
@@ -433,103 +492,150 @@
     const s = Math.floor(sec % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
-
   function escapeHTML(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
+  function coverPath(album) {
+    return `audio/${encodeURIComponent(album.folder)}/${encodeURIComponent(album.cover)}`;
+  }
+  function trackPath(album, track) {
+    return `audio/${encodeURIComponent(album.folder)}/${encodeURIComponent(track.file)}`;
+  }
 
+  // ---------- album grid ----------
   function renderGrid() {
     content.innerHTML = '';
     const grid = document.createElement('div');
     grid.className = 'grid';
 
-    tracks.forEach((t, i) => {
-      const g = gradientFor(t.title + '|' + t.artist);
+    albums.forEach((a, i) => {
       const card = document.createElement('div');
-      card.className = 'track-card';
+      card.className = 'album-card';
       card.dataset.index = i;
       card.innerHTML = `
         <div class="tape"></div>
-        <div class="art" style="background:${g.css}">
-          <span class="note">♪</span>
+        <div class="cover-wrap" style="background-image:url('${coverPath(a)}')">
           <div class="play-overlay"><div class="play-icon">▶</div></div>
         </div>
-        <div class="track-title">${escapeHTML(t.title)}</div>
-        <div class="track-artist">${escapeHTML(t.artist)}</div>
+        <div class="album-title">${escapeHTML(a.album)}</div>
+        <div class="album-count">${a.tracks.length} track${a.tracks.length === 1 ? '' : 's'}</div>
       `;
-      card.addEventListener('click', () => {
-        if (currentIndex === i) {
-          togglePlayPause();
-        } else {
-          playTrack(i);
-        }
-      });
+      card.addEventListener('click', () => openAlbum(i));
       grid.appendChild(card);
     });
 
     content.appendChild(grid);
   }
 
-  function highlightActiveCard() {
-    document.querySelectorAll('.track-card').forEach(c => {
-      const idx = parseInt(c.dataset.index);
-      const isActive = idx === currentIndex;
-      c.classList.toggle('active', isActive);
-      const icon = c.querySelector('.play-icon');
-      if (icon) icon.textContent = (isActive && !AUDIO.paused) ? '⏸' : '▶';
+  // ---------- album detail / tracklist ----------
+  function openAlbum(albumIndex) {
+    currentAlbumIndex = albumIndex;
+    const a = albums[albumIndex];
+    albumDetail.classList.add('show');
+    albumDetail.innerHTML = `
+      <button class="back-to-albums" id="back-btn">← All Albums</button>
+      <div class="detail-head" style="margin-top:14px">
+        <div class="detail-cover" style="background-image:url('${coverPath(a)}')"></div>
+        <div>
+          <div class="detail-title">${escapeHTML(a.album)}</div>
+          <div class="detail-sub">${a.tracks.length} track${a.tracks.length === 1 ? '' : 's'}</div>
+          <button class="play-album-btn" id="play-album-btn">▶ Play Album</button>
+        </div>
+      </div>
+      <div class="track-list">
+        ${a.tracks.map((t, i) => `
+          <div class="track-row" data-track-index="${i}">
+            <div class="track-num">${i + 1}</div>
+            <div>
+              <div class="track-row-title">${escapeHTML(t.title)}</div>
+              <div class="track-row-artist">${escapeHTML(t.artist)}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    document.getElementById('back-btn').addEventListener('click', closeAlbum);
+    document.getElementById('play-album-btn').addEventListener('click', () => playTrack(albumIndex, 0));
+    albumDetail.querySelectorAll('.track-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const ti = parseInt(row.dataset.trackIndex);
+        if (currentAlbumIndex === albumIndex && currentTrackIndex === ti) {
+          togglePlayPause();
+        } else {
+          playTrack(albumIndex, ti);
+        }
+      });
+    });
+
+    highlightActiveTrackRow();
+    albumDetail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function closeAlbum() {
+    albumDetail.classList.remove('show');
+    albumDetail.innerHTML = '';
+  }
+
+  function highlightActiveTrackRow() {
+    albumDetail.querySelectorAll('.track-row').forEach(row => {
+      const ti = parseInt(row.dataset.trackIndex);
+      row.classList.toggle('active', ti === currentTrackIndex);
     });
   }
 
-  function playTrack(index) {
-    if (index < 0 || index >= tracks.length) return;
-    currentIndex = index;
-    const t = tracks[index];
-    AUDIO.src = 'audio/' + t.file;
+  // ---------- playback ----------
+  function playTrack(albumIndex, trackIndex) {
+    const a = albums[albumIndex];
+    if (!a || trackIndex < 0 || trackIndex >= a.tracks.length) return;
+    currentAlbumIndex = albumIndex;
+    currentTrackIndex = trackIndex;
+    const t = a.tracks[trackIndex];
+
+    AUDIO.src = trackPath(a, t);
     AUDIO.play().catch(err => console.warn('Playback failed:', err));
 
     npTitle.textContent = t.title;
     npArtist.textContent = t.artist;
-    const g = gradientFor(t.title + '|' + t.artist);
-    vinyl.style.setProperty('--label-color', g.color);
+    vinyl.style.setProperty('--label-img', `url('${coverPath(a)}')`);
 
     nowPlaying.classList.add('show');
-    highlightActiveCard();
+    highlightActiveTrackRow();
   }
 
   function togglePlayPause() {
-    if (currentIndex === -1) {
-      if (tracks.length) playTrack(0);
-      return;
-    }
+    if (currentAlbumIndex === -1) return;
     if (AUDIO.paused) { AUDIO.play(); } else { AUDIO.pause(); }
   }
 
   function goNext() {
-    if (!tracks.length) return;
+    if (currentAlbumIndex === -1) return;
+    const a = albums[currentAlbumIndex];
     if (isShuffle) {
-      if (tracks.length === 1) { playTrack(0); return; }
+      if (a.tracks.length === 1) { playTrack(currentAlbumIndex, 0); return; }
       let next;
-      do { next = Math.floor(Math.random() * tracks.length); } while (next === currentIndex);
-      playTrack(next);
+      do { next = Math.floor(Math.random() * a.tracks.length); } while (next === currentTrackIndex);
+      playTrack(currentAlbumIndex, next);
     } else {
-      const next = currentIndex + 1;
-      if (next < tracks.length) playTrack(next);
-      else if (isRepeat) playTrack(0);
+      const next = currentTrackIndex + 1;
+      if (next < a.tracks.length) playTrack(currentAlbumIndex, next);
+      else if (isRepeat) playTrack(currentAlbumIndex, 0);
       else { AUDIO.pause(); AUDIO.currentTime = 0; }
     }
   }
 
   function goPrev() {
-    if (!tracks.length) return;
+    if (currentAlbumIndex === -1) return;
     if (AUDIO.currentTime > 3) { AUDIO.currentTime = 0; return; }
+    const a = albums[currentAlbumIndex];
     if (isShuffle) {
       let prev;
-      do { prev = Math.floor(Math.random() * tracks.length); } while (prev === currentIndex && tracks.length > 1);
-      playTrack(prev);
+      do { prev = Math.floor(Math.random() * a.tracks.length); } while (prev === currentTrackIndex && a.tracks.length > 1);
+      playTrack(currentAlbumIndex, prev);
     } else {
-      const prev = currentIndex - 1;
-      if (prev >= 0) playTrack(prev);
-      else if (isRepeat) playTrack(tracks.length - 1);
+      const prev = currentTrackIndex - 1;
+      if (prev >= 0) playTrack(currentAlbumIndex, prev);
+      else if (isRepeat) playTrack(currentAlbumIndex, a.tracks.length - 1);
     }
   }
 
@@ -549,12 +655,12 @@
   AUDIO.addEventListener('play', () => {
     playBtn.textContent = '⏸';
     vinyl.classList.add('spinning');
-    highlightActiveCard();
+    highlightActiveTrackRow();
   });
   AUDIO.addEventListener('pause', () => {
     playBtn.textContent = '▶';
     vinyl.classList.remove('spinning');
-    highlightActiveCard();
+    highlightActiveTrackRow();
   });
   AUDIO.addEventListener('ended', goNext);
 
@@ -574,22 +680,23 @@
 
   volumeBar.addEventListener('input', () => { AUDIO.volume = volumeBar.value / 100; });
 
-  async function loadTracks() {
+  // ---------- load albums ----------
+  async function loadAlbums() {
     try {
       const res = await fetch('audio/manifest.json');
       if (!res.ok) throw new Error('no manifest');
       const data = await res.json();
-      tracks = Array.isArray(data) ? data : [];
+      albums = Array.isArray(data) ? data : [];
     } catch (e) {
       console.warn('Could not load audio/manifest.json:', e);
-      tracks = [];
+      albums = [];
     }
 
-    if (tracks.length === 0) {
+    if (albums.length === 0) {
       content.innerHTML = `<div class="status-msg">
-        🎶 No tracks yet!<br><br>
-        Add audio files to the <code>audio/</code> folder and list them in
-        <code>audio/manifest.json</code> to build your tracklist.
+        🎶 No albums yet!<br><br>
+        Create a folder inside <code>audio/</code> for each album (with a cover
+        image and your tracks), then list it in <code>audio/manifest.json</code>.
       </div>`;
       return;
     }
@@ -597,7 +704,7 @@
     renderGrid();
   }
 
-  loadTracks();
+  loadAlbums();
 </script>
 </body>
 </html>
