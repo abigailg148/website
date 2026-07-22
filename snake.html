@@ -809,10 +809,13 @@
 
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
+            if (e.repeat) return; // ignore auto-repeat from a held-down key
             if (!gameRunning && (dx !== 0 || dy !== 0)) return;
             
             switch(e.key) {
                 case 'ArrowUp':
+                case 'w':
+                case 'W':
                     if (dy === 0) {
                         dx = 0;
                         dy = -1;
@@ -821,6 +824,8 @@
                     e.preventDefault();
                     break;
                 case 'ArrowDown':
+                case 's':
+                case 'S':
                     if (dy === 0) {
                         dx = 0;
                         dy = 1;
@@ -829,6 +834,8 @@
                     e.preventDefault();
                     break;
                 case 'ArrowLeft':
+                case 'a':
+                case 'A':
                     if (dx === 0) {
                         dx = -1;
                         dy = 0;
@@ -837,6 +844,8 @@
                     e.preventDefault();
                     break;
                 case 'ArrowRight':
+                case 'd':
+                case 'D':
                     if (dx === 0) {
                         dx = 1;
                         dy = 0;
