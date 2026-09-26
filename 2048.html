@@ -557,6 +557,7 @@
     winOverlay.classList.remove('show');
     loseOverlay.classList.remove('show');
     scoreEl.textContent = '0';
+    if (window.__resetScoreEntry) window.__resetScoreEntry();
     addRandomTile();
     addRandomTile();
     render({ spawned: [], merged: [] });
@@ -677,6 +678,7 @@
     if (isGameOver()) {
       finalScoreText.textContent = `Final score: ${score}`;
       loseOverlay.classList.add('show');
+      if (window.__showScoreEntry) window.__showScoreEntry(score);
     }
   }
 
