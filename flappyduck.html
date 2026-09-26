@@ -539,9 +539,11 @@
 
         // Event listener for jump (keyboard)
         document.addEventListener('keydown', function(e) {
-            if (e.key === " " && !isGameOver) {
-                birdSpeed = lift;
+            if (e.key === " " || e.code === "Space") {
                 e.preventDefault();
+                if (!isGameOver) {
+                    birdSpeed = lift;
+                }
             }
         });
 
